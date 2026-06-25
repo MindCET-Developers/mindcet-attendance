@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@att/shared": "workspace:*",
+    "@babel/runtime": "7.29.7",
     "@react-native-async-storage/async-storage": "2.1.0",
     "@supabase/supabase-js": "^2.47.10",
     "expo": "~52.0.0",

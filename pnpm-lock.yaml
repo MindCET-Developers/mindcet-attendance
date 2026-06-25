@@ -25,6 +25,9 @@ importers:
       '@att/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@babel/runtime':
+        specifier: 7.29.7
+        version: 7.29.7
       '@react-native-async-storage/async-storage':
         specifier: 2.1.0
         version: 2.1.0(react-native@0.76.5(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.31)(react@18.3.1))

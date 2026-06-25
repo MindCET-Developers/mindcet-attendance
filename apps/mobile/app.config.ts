@@ -5,6 +5,7 @@ const config: ExpoConfig = {
   slug: "mindcet-attendance",
   scheme: "mindcet-attendance",
   version: "0.1.0",
+  platforms: ["ios", "android"],
   orientation: "portrait",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
