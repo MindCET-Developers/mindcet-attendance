@@ -1,0 +1,12 @@
+{
+  "name": "נוכחות אישית · MindCET",
+  "short_name": "נוכחות",
+  "description": "מעקב נוכחות אישי וייצוא דו״ח חודשי",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f8fc",
+  "theme_color": "#4f46e5",
+  "icons": []
+}

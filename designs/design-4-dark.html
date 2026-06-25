@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עיצוב 4 · Focus Dark · נוכחות</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0f1d; --bg-2:#12172a; --surface:#161c33; --surface-2:#1d2440;
+    --ink:#eef1fb; --soft:#9aa3c4; --faint:#646d92; --line:#262e4d;
+    --cyan:#22d3ee; --cyan-soft:rgba(34,211,238,.14);
+    --lime:#a3e635; --lime-soft:rgba(163,230,53,.14);
+    --violet:#a78bfa; --rose:#fb7185; --amber:#fbbf24;
+    --r:18px; --r-sm:12px; --sh:0 18px 40px rgba(0,0,0,.45);
+    --font:'Heebo','Segoe UI',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:
+      radial-gradient(800px 360px at 100% -5%, rgba(34,211,238,.12), transparent 60%),
+      radial-gradient(700px 340px at 0% 5%, rgba(167,139,250,.12), transparent 55%),
+      var(--bg);color:var(--ink);line-height:1.6}
+  .top{background:rgba(18,23,42,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px}
+  .logo{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:flex;align-items:center;justify-content:center;color:#0c0f1d;font-size:18px;font-weight:900;box-shadow:0 0 24px rgba(34,211,238,.5)}
+  .navlinks{display:flex;gap:4px}
+  .navlinks a{padding:9px 15px;border-radius:10px;font-size:14px;font-weight:700;color:var(--soft);text-decoration:none}
+  .navlinks a.on{background:var(--cyan-soft);color:var(--cyan)}
+  .ava{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--violet),#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .tag{text-align:center;padding:8px 18px 14px;color:var(--faint);font-size:13px}
+  .stage{max-width:1180px;margin:0 auto;padding:8px 28px 60px;display:grid;grid-template-columns:344px 1fr;gap:26px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  .phone{background:#05060c;border-radius:42px;padding:13px;box-shadow:0 30px 70px rgba(0,0,0,.6);border:1px solid #1b2240;position:sticky;top:90px}
+  .screen{background:var(--bg-2);border-radius:30px;overflow:hidden;height:660px;display:flex;flex-direction:column}
+  .ph-head{padding:20px 20px 6px;display:flex;justify-content:space-between;align-items:center}
+  .ph-head .hi{font-size:13px;color:var(--faint)} .ph-head .nm{font-size:17px;font-weight:800}
+  .ph-body{padding:10px 20px 20px;overflow:auto;flex:1}
+  .clockcard{background:linear-gradient(160deg,var(--surface),var(--bg-2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:22px;text-align:center;position:relative;overflow:hidden}
+  .clockcard::before{content:"";position:absolute;inset:0;background:radial-gradient(200px 80px at 50% 0%,rgba(34,211,238,.18),transparent 70%)}
+  .status{position:relative;display:inline-flex;align-items:center;gap:7px;background:var(--lime-soft);color:var(--lime);font-weight:800;font-size:13px;padding:6px 13px;border-radius:999px;border:1px solid rgba(163,230,53,.3)}
+  .clock{position:relative;font-size:44px;font-weight:900;direction:ltr;margin:14px 0 2px;color:#fff;text-shadow:0 0 24px rgba(34,211,238,.5)}
+  .date{position:relative;font-size:13px;color:var(--faint)}
+  .punch{position:relative;margin-top:20px;width:100%;border:1px solid rgba(34,211,238,.4);cursor:pointer;font-family:var(--font);font-weight:800;font-size:17px;color:#06121a;background:linear-gradient(135deg,var(--cyan),#38bdf8);padding:16px;border-radius:14px;box-shadow:0 0 30px rgba(34,211,238,.4)}
+  .mini{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}
+  .m{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:13px;text-align:center}
+  .m .l{font-size:11px;color:var(--faint);font-weight:700} .m .v{font-size:18px;font-weight:900;color:var(--cyan)}
+  .sec-t{font-size:12px;font-weight:800;color:var(--soft);letter-spacing:.04em;margin:18px 2px 8px}
+  .logrow{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+  .logrow .h{font-weight:800;direction:ltr;color:#fff} .ed{font-size:10px;color:var(--amber);background:rgba(251,191,36,.14);padding:2px 8px;border-radius:6px;font-weight:800}
+
+  .dash h1{font-size:25px;font-weight:900} .crumb{font-size:13px;color:var(--faint);margin-bottom:14px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:920px){.cards{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:18px;position:relative;overflow:hidden}
+  .stat .glow{position:absolute;top:-30px;left:-20px;width:80px;height:80px;border-radius:50%;filter:blur(30px);opacity:.5}
+  .stat .l{font-size:13px;color:var(--faint);font-weight:700} .stat .v{font-size:27px;font-weight:900;margin-top:3px}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px;margin-top:18px}
+  .ph2{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .ph2 h3{font-size:16px;font-weight:800}
+  .btn{cursor:pointer;font-family:var(--font);font-weight:800;font-size:13px;padding:9px 15px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--soft)}
+  .btn.pri{background:linear-gradient(135deg,var(--cyan),#38bdf8);color:#06121a;border:none}
+  .chart{display:flex;align-items:flex-end;gap:13px;height:150px;padding:8px 4px}
+  .chart .col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .chart .bar{width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,var(--cyan),rgba(34,211,238,.25));box-shadow:0 0 18px rgba(34,211,238,.3)}
+  .chart .bar.lime{background:linear-gradient(180deg,var(--lime),rgba(163,230,53,.25));box-shadow:0 0 18px rgba(163,230,53,.3)}
+  .chart .cl{font-size:11px;color:var(--faint);font-weight:700}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:right;padding:11px 13px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;color:var(--faint);font-weight:800}
+  td .u{display:flex;align-items:center;gap:9px;font-weight:700}
+  .udot{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#06121a;font-size:12px;font-weight:800}
+  .pill{font-size:11.5px;font-weight:800;padding:4px 11px;border-radius:999px;border:1px solid transparent}
+  .pill.in{background:var(--lime-soft);color:var(--lime);border-color:rgba(163,230,53,.3)}
+  .pill.out{background:var(--surface-2);color:var(--soft)} .pill.lv{background:rgba(251,191,36,.14);color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><div class="logo">⏱</div> נוכחות · בקרה</div>
+  <div class="navlinks"><a class="on" href="#">דשבורד</a><a href="#">נוכחות</a><a href="#">חופשות</a><a href="#">דוחות</a><a href="#">עובדים</a></div>
+  <div class="ava">מנ</div>
+</div>
+<div class="tag">עיצוב 4 — <b>Focus Dark</b> · מצב כהה, אקצנט נאון, דשבורד עתיר-נתונים למסכי בקרה</div>
+
+<div class="stage">
+  <div class="phone">
+    <div class="screen">
+      <div class="ph-head"><div><div class="hi">ערב טוב,</div><div class="nm">דנה כהן</div></div><div class="ava">דכ</div></div>
+      <div class="ph-body">
+        <div class="clockcard">
+          <span class="status">● פעיל/ה מ-08:31</span>
+          <div class="clock">08:42:15</div>
+          <div class="date">יום חמישי · 18.06.2026</div>
+          <button class="punch">החתמת יציאה ←</button>
+        </div>
+        <div class="mini">
+          <div class="m"><div class="l">היום</div><div class="v">0:11</div></div>
+          <div class="m"><div class="l">החודש</div><div class="v">142:30</div></div>
+        </div>
+        <div class="sec-t">היסטוריה</div>
+        <div class="logrow"><span style="color:var(--soft)">ד׳ 17.06</span><span><span class="ed">נערך</span> <span class="h">08:00–17:00</span></span></div>
+        <div class="logrow"><span style="color:var(--soft)">ג׳ 16.06</span><span class="h">08:15–16:45</span></div>
+        <div class="logrow"><span style="color:var(--soft)">ב׳ 15.06</span><span class="h">09:00–18:10</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash">
+    <div class="crumb">דשבורד / בקרת נוכחות</div>
+    <h1>מרכז בקרה — זמן אמת</h1>
+    <div style="height:16px"></div>
+    <div class="cards">
+      <div class="stat"><div class="glow" style="background:var(--lime)"></div><div class="l">נוכחים</div><div class="v" style="color:var(--lime)">28</div></div>
+      <div class="stat"><div class="glow" style="background:var(--rose)"></div><div class="l">חסרים</div><div class="v" style="color:var(--rose)">6</div></div>
+      <div class="stat"><div class="glow" style="background:var(--amber)"></div><div class="l">בחופשה</div><div class="v" style="color:var(--amber)">3</div></div>
+      <div class="stat"><div class="glow" style="background:var(--cyan)"></div><div class="l">שעות היום</div><div class="v" style="color:var(--cyan)">214</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph2"><h3>שעות מצטברות · השבוע</h3><button class="btn">7 ימים ▾</button></div>
+      <div class="chart">
+        <div class="col"><div class="bar" style="height:55%"></div><div class="cl">א׳</div></div>
+        <div class="col"><div class="bar" style="height:78%"></div><div class="cl">ב׳</div></div>
+        <div class="col"><div class="bar" style="height:64%"></div><div class="cl">ג׳</div></div>
+        <div class="col"><div class="bar lime" style="height:92%"></div><div class="cl">ד׳</div></div>
+        <div class="col"><div class="bar" style="height:72%"></div><div class="cl">ה׳</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="ph2"><h3>נוכחות חיה</h3><div style="display:flex;gap:8px"><button class="btn">סינון</button><button class="btn pri">ייצוא ▾</button></div></div>
+      <table>
+        <thead><tr><th>עובד</th><th>מחלקה</th><th>כניסה</th><th>סטטוס</th></tr></thead>
+        <tbody>
+          <tr><td><div class="u"><span class="udot" style="background:var(--cyan)">דכ</span> דנה כהן</div></td><td>פיתוח</td><td style="direction:ltr">08:31</td><td><span class="pill in">● פעיל/ה</span></td></tr>
+          <tr><td><div class="u"><span class="udot" style="background:var(--lime)">אל</span> אבי לוי</div></td><td>שיווק</td><td style="direction:ltr">08:05</td><td><span class="pill in">● פעיל/ה</span></td></tr>
+          <tr><td><div class="u"><span class="udot" style="background:var(--violet)">מר</span> מאיה רון</div></td><td>מוצר</td><td style="direction:ltr">—</td><td><span class="pill lv">בחופשה</span></td></tr>
+          <tr><td><div class="u"><span class="udot" style="background:var(--rose)">יש</span> יואב שמש</div></td><td>פיתוח</td><td style="direction:ltr">07:58</td><td><span class="pill out">יצא/ה 16:40</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>setInterval(()=>{const e=document.querySelector('.clock');if(!e)return;e.textContent=new Date().toLocaleTimeString('he-IL',{hour12:false})},1000);</script>
+</body>
+</html>

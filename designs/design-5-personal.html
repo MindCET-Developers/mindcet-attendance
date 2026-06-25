@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מצב שימוש אישי · נוכחות</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f7f8fc; --surface:#fff; --surface-2:#f1f3fa;
+    --ink:#11151f; --soft:#5a6377; --faint:#9aa1b4;
+    --line:#e7e9f2; --brand:#4f46e5; --brand-2:#6366f1; --brand-soft:#eef0ff;
+    --green:#0f9d6b; --green-soft:#e6f7f0; --red:#dc2b4b; --red-soft:#fdeaee;
+    --amber:#d9870b; --amber-soft:#fdf3e0; --cyan:#0891b2; --cyan-soft:#e2f6fb;
+    --r:18px; --r-sm:12px; --sh:0 1px 2px rgba(16,21,33,.05),0 10px 30px rgba(16,21,33,.07);
+    --font:'Heebo','Segoe UI',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.6}
+  .top{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 26px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .modepill{font-size:12px;font-weight:800;background:var(--brand-soft);color:var(--brand);padding:5px 11px;border-radius:999px;margin-inline-start:6px}
+  .navlinks{display:flex;gap:6px}
+  .navlinks a{padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;color:var(--soft);text-decoration:none}
+  .navlinks a.on{background:var(--brand-soft);color:var(--brand)}
+  .ava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a5b4fc,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .tag{text-align:center;padding:16px;color:var(--faint);font-size:13px}
+  .stage{max-width:1180px;margin:0 auto;padding:8px 26px 60px;display:grid;grid-template-columns:340px 1fr;gap:26px;align-items:start}
+  @media(max-width:920px){.stage{grid-template-columns:1fr}}
+
+  /* phone */
+  .phone{background:#0f1222;border-radius:38px;padding:12px;box-shadow:0 30px 70px rgba(16,21,33,.25);position:sticky;top:90px}
+  .screen{background:var(--bg);border-radius:28px;overflow:hidden;height:680px;display:flex;flex-direction:column}
+  .ph-head{padding:18px 18px 8px;display:flex;justify-content:space-between;align-items:center}
+  .ph-head .hi{font-size:13px;color:var(--faint)} .ph-head .nm{font-size:16px;font-weight:800}
+  .ph-body{padding:8px 18px 18px;overflow:auto;flex:1}
+  .clockcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:22px;text-align:center}
+  .status{display:inline-flex;align-items:center;gap:7px;background:var(--green-soft);color:var(--green);font-weight:700;font-size:13px;padding:6px 12px;border-radius:999px}
+  .clock{font-size:42px;font-weight:800;letter-spacing:1px;direction:ltr;margin:14px 0 4px}
+  .date{font-size:13px;color:var(--faint)}
+  .punch{margin-top:18px;width:100%;border:none;cursor:pointer;font-family:var(--font);font-weight:800;font-size:17px;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-2));padding:16px;border-radius:16px;box-shadow:0 12px 26px rgba(79,70,229,.35)}
+  .mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .ms{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .ms .l{font-size:11px;color:var(--faint);font-weight:600} .ms .v{font-size:18px;font-weight:800;color:var(--brand)}
+  .report-cta{margin-top:14px;width:100%;border:1px dashed #c7cbff;background:var(--brand-soft);color:var(--brand);border-radius:14px;padding:14px;font-weight:800;font-size:14px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px}
+  .sec-t{font-size:13px;font-weight:800;color:var(--soft);margin:18px 2px 8px}
+  .logrow{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px}
+  .logrow .d{color:var(--soft)} .logrow .h{font-weight:700;direction:ltr}
+
+  /* day-type chips */
+  .dt{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+  .dt.work{background:var(--green-soft);color:var(--green)}
+  .dt.vac{background:var(--amber-soft);color:var(--amber)}
+  .dt.sick{background:var(--red-soft);color:var(--red)}
+  .dt.hol{background:var(--cyan-soft);color:var(--cyan)}
+
+  /* main */
+  .main h1{font-size:24px;font-weight:800} .crumb{font-size:13px;color:var(--faint);margin-bottom:14px}
+
+  /* onboarding strip */
+  .onb{background:linear-gradient(120deg,#11151f,#222a44);color:#fff;border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:var(--sh)}
+  .onb .txt h3{font-size:16px;font-weight:800} .onb .txt p{font-size:13px;color:#c9cde0;margin-top:2px}
+  .onb .opts{display:flex;gap:10px}
+  .opt{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .opt.sel{background:#fff;color:var(--brand);border-color:#fff}
+
+  .report{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);margin-top:18px;overflow:hidden}
+  .rhead{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .rhead h2{font-size:18px;font-weight:800}
+  .rhead .who{font-size:13px;color:var(--faint)}
+  .mselect{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-weight:700;font-size:14px}
+  .exrow{display:flex;gap:8px}
+  .btn{border:none;cursor:pointer;font-family:var(--font);font-weight:700;font-size:13px;padding:9px 14px;border-radius:10px;display:inline-flex;align-items:center;gap:6px}
+  .btn.x{background:var(--green);color:#fff} .btn.c{background:var(--surface-2);color:var(--soft)} .btn.p{background:var(--red);color:#fff}
+  .summ{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-bottom:1px solid var(--line)}
+  @media(max-width:600px){.summ{grid-template-columns:1fr 1fr}}
+  .sm{padding:16px 20px;border-inline-start:1px solid var(--line)}
+  .sm:first-child{border-inline-start:none}
+  .sm .l{font-size:12px;color:var(--faint);font-weight:600} .sm .v{font-size:22px;font-weight:800;margin-top:2px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:right;padding:11px 14px;border-bottom:1px solid var(--line)}
+  th{background:var(--surface-2);font-size:12px;color:var(--soft);font-weight:700}
+  td.ltr{direction:ltr;text-align:right}
+  tr.tot td{background:#fafbff;font-weight:800;border-top:2px solid var(--line);border-bottom:none}
+  .rfoot{padding:14px 20px;background:var(--brand-soft);color:var(--brand);font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><div class="logo">⏱</div> נוכחות <span class="modepill">שימוש אישי</span></div>
+  <div class="navlinks"><a class="on" href="#">בית</a><a href="#">יומן</a><a href="#">דו״ח חודשי</a><a href="#">הגדרות</a></div>
+  <div class="ava">דכ</div>
+</div>
+<div class="tag">מצב <b>שימוש אישי</b> · מעקב עצמי + הפקת קובץ נוכחות חודשי להגשה למעסיק (עיצוב Modern Clean)</div>
+
+<div class="stage">
+  <!-- PHONE: personal home -->
+  <div class="phone">
+    <div class="screen">
+      <div class="ph-head"><div><div class="hi">בוקר טוב,</div><div class="nm">דנה כהן</div></div><div class="ava">דכ</div></div>
+      <div class="ph-body">
+        <div class="clockcard">
+          <span class="status">● נוכח/ת מ-08:31</span>
+          <div class="clock">08:42:15</div>
+          <div class="date">יום חמישי · 18 ביוני 2026</div>
+          <button class="punch">יציאה ←</button>
+        </div>
+        <div class="mini-stats">
+          <div class="ms"><div class="l">היום</div><div class="v">0:11</div></div>
+          <div class="ms"><div class="l">החודש</div><div class="v">142:30</div></div>
+        </div>
+        <button class="report-cta">📄 הפק דו״ח חודשי</button>
+        <div class="sec-t">היומן שלי</div>
+        <div class="logrow"><span class="d">ד׳ 17.06 <span class="dt work">עבודה</span></span><span class="h">08:00–17:00</span></div>
+        <div class="logrow"><span class="d">ג׳ 16.06 <span class="dt sick">מחלה</span></span><span class="h">—</span></div>
+        <div class="logrow"><span class="d">ב׳ 15.06 <span class="dt work">עבודה</span></span><span class="h">09:00–18:10</span></div>
+        <div class="logrow"><span class="d">א׳ 14.06 <span class="dt vac">חופש</span></span><span class="h">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN: onboarding concept + monthly report -->
+  <div class="main">
+    <div class="crumb">בית / דו״ח חודשי</div>
+    <h1>הדו״ח החודשי שלי</h1>
+    <div style="height:14px"></div>
+
+    <div class="onb">
+      <div class="txt"><h3>איך תרצה להשתמש?</h3><p>בחירה חד-פעמית בכניסה הראשונה — אפשר לשנות בהגדרות</p></div>
+      <div class="opts">
+        <div class="opt sel">👤 שימוש אישי ✓</div>
+        <div class="opt">🏢 ארגון / צוות</div>
+      </div>
+    </div>
+
+    <div class="report">
+      <div class="rhead">
+        <div><h2>דו״ח נוכחות חודשי</h2><div class="who">דנה כהן · ת.ז 0•••••••9</div></div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="mselect">📅 יוני 2026 ▾</div>
+          <div class="exrow">
+            <button class="btn x">⬇ Excel</button>
+            <button class="btn c">CSV</button>
+            <button class="btn p">PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="summ">
+        <div class="sm"><div class="l">ימי עבודה</div><div class="v">19</div></div>
+        <div class="sm"><div class="l">סה״כ שעות</div><div class="v" style="color:var(--brand)">163:45</div></div>
+        <div class="sm"><div class="l">חופש</div><div class="v" style="color:var(--amber)">1</div></div>
+        <div class="sm"><div class="l">מחלה</div><div class="v" style="color:var(--red)">1</div></div>
+      </div>
+
+      <table>
+        <thead><tr><th>תאריך</th><th>יום</th><th>סוג יום</th><th>כניסה</th><th>יציאה</th><th>סה״כ</th><th>הערות</th></tr></thead>
+        <tbody>
+          <tr><td class="ltr">01.06</td><td>א׳</td><td><span class="dt work">עבודה</span></td><td class="ltr">08:05</td><td class="ltr">17:00</td><td class="ltr">8:55</td><td>—</td></tr>
+          <tr><td class="ltr">02.06</td><td>ב׳</td><td><span class="dt work">עבודה</span></td><td class="ltr">08:30</td><td class="ltr">17:15</td><td class="ltr">8:45</td><td>—</td></tr>
+          <tr><td class="ltr">03.06</td><td>ג׳</td><td><span class="dt vac">חופש</span></td><td class="ltr">—</td><td class="ltr">—</td><td class="ltr">—</td><td>יום חופש</td></tr>
+          <tr><td class="ltr">04.06</td><td>ד׳</td><td><span class="dt work">עבודה</span></td><td class="ltr">09:00</td><td class="ltr">18:10</td><td class="ltr">9:10</td><td>עבודה מהבית</td></tr>
+          <tr><td class="ltr">05.06</td><td>ה׳</td><td><span class="dt sick">מחלה</span></td><td class="ltr">—</td><td class="ltr">—</td><td class="ltr">—</td><td>אישור רפואי</td></tr>
+          <tr><td class="ltr">08.06</td><td>א׳</td><td><span class="dt work">עבודה</span></td><td class="ltr">08:00</td><td class="ltr">16:45</td><td class="ltr">8:45</td><td>—</td></tr>
+          <tr><td class="ltr">09.06</td><td>ב׳</td><td><span class="dt hol">חג</span></td><td class="ltr">—</td><td class="ltr">—</td><td class="ltr">—</td><td>שבועות</td></tr>
+          <tr class="tot"><td colspan="5">סיכום חודשי · 19 ימי עבודה</td><td class="ltr">163:45</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="rfoot">✓ הקובץ מוכן להגשה — לחיצה על "Excel" מורידה גיליון מסודר עם כל השורות והסיכום.</div>
+    </div>
+  </div>
+</div>
+<script>setInterval(()=>{const e=document.querySelector('.clock');if(!e)return;e.textContent=new Date().toLocaleTimeString('he-IL',{hour12:false})},1000);</script>
+</body>
+</html>

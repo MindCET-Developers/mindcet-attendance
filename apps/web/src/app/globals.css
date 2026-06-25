@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 228 40% 98%;
+  --foreground: 222 32% 9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 32% 9%;
+
+  --primary: 243 75% 59%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 234 100% 97%;
+  --secondary-foreground: 245 51% 42%;
+
+  --muted: 228 38% 96%;
+  --muted-foreground: 222 14% 41%;
+
+  --accent: 234 100% 97%;
+  --accent-foreground: 245 51% 42%;
+
+  --destructive: 348 73% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --success: 156 82% 34%;
+  --success-foreground: 0 0% 100%;
+
+  --warning: 36 90% 45%;
+  --warning-foreground: 0 0% 100%;
+
+  --border: 228 30% 93%;
+  --input: 228 30% 93%;
+  --ring: 243 75% 59%;
+
+  --radius: 0.9rem;
+  --font-sans: "Heebo", system-ui, "Segoe UI", Arial, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Subtle radial glow for hero/auth surfaces */
+.surface-glow {
+  background:
+    radial-gradient(900px 360px at 100% -10%, hsl(var(--primary) / 0.12), transparent 60%),
+    radial-gradient(700px 320px at 0% 0%, hsl(196 80% 45% / 0.08), transparent 55%);
+}
