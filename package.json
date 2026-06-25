@@ -23,6 +23,7 @@
   },
   "pnpm": {
     "overrides": {
+      "postcss": "8.5.15",
       "typescript": "5.7.2"
     },
     "packageExtensions": {
