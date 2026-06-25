@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הצעות עיצוב · P3 יומן והחתמה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --surface-2: #f0f2f8;
+    --ink: #11151f;
+    --ink-soft: #4b5468;
+    --ink-faint: #8a92a6;
+    --line: #e3e7f0;
+    --line-soft: #eef1f6;
+    --brand: #4f46e5;
+    --brand-ink: #3730a3;
+    --brand-soft: #eef0ff;
+    --green: #0f9d6b;
+    --green-soft: #e6f7f0;
+    --amber: #d9870b;
+    --amber-soft: #fff4dc;
+    --red: #dc2b4b;
+    --red-soft: #fde8ee;
+    --cyan: #0891b2;
+    --cyan-soft: #e1f6fb;
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(17, 21, 31, .05), 0 14px 34px rgba(17, 21, 31, .08);
+    --font: "Heebo", "Segoe UI", Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: var(--font);
+    color: var(--ink);
+    background:
+      radial-gradient(900px 320px at 100% -5%, rgba(79,70,229,.13), transparent 58%),
+      radial-gradient(740px 300px at 0 0, rgba(8,145,178,.10), transparent 52%),
+      var(--bg);
+    line-height: 1.45;
+  }
+
+  button, input, select, textarea { font: inherit; }
+  .wrap { max-width: 1260px; margin: 0 auto; padding: 28px 20px 70px; }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 22px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 900; }
+  .mark {
+    width: 38px; height: 38px; border-radius: 11px;
+    display: grid; place-items: center; background: var(--brand); color: #fff;
+    box-shadow: 0 10px 24px rgba(79,70,229,.26);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    border: 1px solid var(--line); background: rgba(255,255,255,.74);
+    border-radius: 999px; padding: 7px 12px; color: var(--ink-soft); font-size: 13px;
+  }
+  h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: 0; }
+  .hero {
+    display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+    gap: 24px; align-items: end; margin-bottom: 28px;
+  }
+  .hero p { margin: 12px 0 0; color: var(--ink-soft); max-width: 720px; font-size: 17px; }
+  .hero-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+    box-shadow: var(--shadow); padding: 18px;
+  }
+  .hero-box strong { display: block; font-size: 28px; }
+  .hero-box span { color: var(--ink-soft); }
+  .nav {
+    display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 24px;
+    position: sticky; top: 0; z-index: 10; background: rgba(246,247,251,.84);
+    backdrop-filter: blur(10px);
+  }
+  .nav a {
+    flex: 0 0 auto; text-decoration: none; color: var(--ink-soft);
+    border: 1px solid var(--line); background: rgba(255,255,255,.78);
+    border-radius: 999px; padding: 8px 13px; font-weight: 700; font-size: 13px;
+  }
+  .concept {
+    margin: 0 0 34px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .concept-head {
+    display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+    padding: 20px 22px; border-bottom: 1px solid var(--line-soft);
+  }
+  .num {
+    color: var(--brand); background: var(--brand-soft);
+    border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 900;
+  }
+  .concept h2 { margin: 8px 0 4px; font-size: 24px; line-height: 1.15; }
+  .concept .why { margin: 0; color: var(--ink-soft); }
+  .fit {
+    display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;
+  }
+  .tag {
+    border-radius: 999px; padding: 5px 9px; font-size: 12px; font-weight: 800;
+    background: var(--surface-2); color: var(--ink-soft);
+  }
+  .tag.good { background: var(--green-soft); color: var(--green); }
+  .tag.focus { background: var(--brand-soft); color: var(--brand-ink); }
+  .tag.warn { background: var(--amber-soft); color: var(--amber); }
+  .mock { padding: 20px; background: #f9fafe; }
+
+  .app-shell {
+    min-height: 560px; background: var(--bg); border: 1px solid var(--line);
+    border-radius: 18px; overflow: hidden;
+  }
+  .app-header {
+    height: 58px; background: rgba(255,255,255,.86); border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 18px;
+  }
+  .app-title { display: flex; align-items: center; gap: 9px; font-weight: 900; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 900; }
+  .screen { padding: 18px; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .space-between { justify-content: space-between; }
+  .stack { display: grid; gap: 12px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px;
+  }
+  .mini-label { font-size: 12px; color: var(--ink-faint); font-weight: 700; }
+  .big-number { font-size: 42px; font-weight: 900; line-height: 1; letter-spacing: 0; }
+  .medium-number { font-size: 24px; font-weight: 900; }
+  .muted { color: var(--ink-soft); }
+  .btn {
+    border: 0; border-radius: 10px; background: var(--brand); color: #fff;
+    padding: 11px 15px; font-weight: 900; cursor: default;
+    box-shadow: 0 9px 18px rgba(79,70,229,.20);
+  }
+  .btn.green { background: var(--green); box-shadow: 0 9px 18px rgba(15,157,107,.20); }
+  .btn.light { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+  .btn.ghost { background: var(--surface-2); color: var(--ink-soft); box-shadow: none; }
+  .field {
+    border: 1px solid var(--line); background: #fff; border-radius: 10px;
+    min-height: 40px; padding: 8px 10px; color: var(--ink);
+  }
+  .small-field { min-height: 34px; padding: 6px 9px; border-radius: 9px; }
+  .status-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(15,157,107,.12); }
+  .month-control { display: flex; align-items: center; gap: 10px; }
+  .month-control strong { min-width: 110px; text-align: center; }
+  .day-type { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green); }
+  .day-type.off { background: var(--amber-soft); color: var(--amber); }
+  .day-type.miss { background: var(--red-soft); color: var(--red); }
+
+  /* Concept 1 */
+  .focus-layout { display: grid; grid-template-columns: 340px 1fr; gap: 14px; }
+  .week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .week-day {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px;
+    min-height: 92px; display: grid; align-content: space-between;
+  }
+  .week-day.active { border-color: rgba(79,70,229,.45); box-shadow: inset 0 0 0 2px rgba(79,70,229,.08); }
+  .week-day .date { font-weight: 900; }
+  .week-day .hours { color: var(--ink-soft); font-size: 13px; }
+  .edit-rail { display: grid; grid-template-columns: 1fr 1fr 1.3fr auto; gap: 10px; align-items: end; }
+
+  /* Concept 2 */
+  .calendar-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; }
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-cell {
+    min-height: 104px; border: 1px solid var(--line); border-radius: 12px; background: #fff;
+    padding: 9px; display: grid; align-content: space-between;
+  }
+  .cal-cell.blank { opacity: .42; background: var(--surface-2); }
+  .cal-cell.selected { border-color: var(--brand); box-shadow: inset 0 0 0 2px rgba(79,70,229,.10); }
+  .cal-top { display: flex; justify-content: space-between; gap: 8px; }
+  .cal-hours { font-weight: 900; font-size: 18px; }
+  .drawer-line { display: grid; grid-template-columns: 80px 1fr; gap: 8px; align-items: center; }
+
+  /* Concept 3 */
+  .timeline-list { display: grid; gap: 10px; }
+  .time-row {
+    display: grid; grid-template-columns: 92px 1fr 96px 96px 92px auto; gap: 10px; align-items: center;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px;
+  }
+  .time-row.issue { border-color: rgba(220,43,75,.26); background: linear-gradient(90deg, #fff, #fff7f9); }
+  .date-box { font-weight: 900; }
+  .date-box small { display: block; color: var(--ink-faint); font-weight: 700; }
+
+  /* Concept 4 */
+  .timesheet { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; }
+  .sheet-row {
+    display: grid; grid-template-columns: 120px repeat(5, 1fr) 88px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .sheet-row:last-child { border-bottom: 0; }
+  .sheet-row > div { padding: 11px 12px; border-left: 1px solid var(--line-soft); }
+  .sheet-row > div:last-child { border-left: 0; }
+  .sheet-head { background: var(--surface-2); color: var(--ink-soft); font-weight: 900; font-size: 13px; }
+  .sheet-row.highlight { background: #fbfcff; }
+
+  /* Concept 5 */
+  .mobile-preview-wrap { display: grid; grid-template-columns: 360px 1fr; gap: 18px; align-items: start; }
+  .phone {
+    width: 330px; margin: 0 auto; border-radius: 34px; background: #11151f; padding: 12px;
+    box-shadow: 0 18px 44px rgba(17,21,31,.24);
+  }
+  .phone-screen { background: var(--bg); min-height: 640px; border-radius: 26px; padding: 16px; overflow: hidden; }
+  .phone-clock {
+    background: #fff; border-radius: 24px; padding: 22px; text-align: center;
+    box-shadow: 0 12px 28px rgba(17,21,31,.08);
+  }
+  .phone-list { display: grid; gap: 9px; margin-top: 16px; }
+  .phone-day { display: flex; justify-content: space-between; align-items: center; border-radius: 14px; background: #fff; padding: 12px; }
+  .wide-note { display: grid; gap: 12px; }
+
+  /* Concept 6 */
+  .review-layout { display: grid; grid-template-columns: 1fr 340px; gap: 14px; }
+  .exception-list { display: grid; gap: 10px; }
+  .exception {
+    display: grid; grid-template-columns: 92px 1fr auto; gap: 12px; align-items: center;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px;
+  }
+  .exception.high { border-color: rgba(220,43,75,.32); }
+  .progress { height: 9px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .progress span { display: block; height: 100%; background: var(--brand); border-radius: inherit; }
+
+  @media (max-width: 980px) {
+    .hero, .focus-layout, .calendar-layout, .mobile-preview-wrap, .review-layout { grid-template-columns: 1fr; }
+    .grid3 { grid-template-columns: 1fr; }
+    .time-row { grid-template-columns: 1fr 1fr; }
+    .edit-rail { grid-template-columns: 1fr 1fr; }
+    .calendar-grid, .week-strip { grid-template-columns: repeat(2, 1fr); }
+    .sheet-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><span class="mark">⏱</span> נוכחות · P3</div>
+      <span class="pill">6 הצעות לעמוד החתמה + יומן</span>
+    </div>
+
+    <section class="hero">
+      <div>
+        <h1>כיווני עיצוב טובים יותר לעמוד ההחתמה והיומן</h1>
+        <p>המטרה: פחות דרופדאונים בכל מקום, פחות תחושת “טבלת אדמין”, ויותר זרימה יומיומית של משתמש שמגיע להחתים, לתקן יום אחד, ולבדוק שהחודש מסודר.</p>
+      </div>
+      <div class="hero-box">
+        <span>המלצה ראשונית</span>
+        <strong>כיוון 2 או 6</strong>
+        <span>כיוון 2 למוצר יומן קלאסי. כיוון 6 למוצר פרקטי שמבליט רק מה שצריך טיפול.</span>
+      </div>
+    </section>
+
+    <nav class="nav">
+      <a href="#c1">01 פוקוס היום</a>
+      <a href="#c2">02 לוח חודש</a>
+      <a href="#c3">03 רשימה שבועית</a>
+      <a href="#c4">04 Timesheet נקי</a>
+      <a href="#c5">05 Mobile-first</a>
+      <a href="#c6">06 חריגים תחילה</a>
+    </nav>
+
+    <section class="concept" id="c1">
+      <div class="concept-head">
+        <div>
+          <span class="num">01</span>
+          <h2>פוקוס היום + שבוע עריכה מהירה</h2>
+          <p class="why">המסך נפתח על הפעולה החשובה: כניסה/יציאה. היומן מוצג כשבוע קומפקטי, ורק יום שנבחר מקבל אזור עריכה.</p>
+        </div>
+        <div class="fit"><span class="tag good">הכי פשוט ליומיום</span><span class="tag focus">מעט פקדים</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><div class="row"><button class="btn light">יציאה</button><span class="avatar">Mi</span></div></div>
+          <div class="screen focus-layout">
+            <div class="panel stack">
+              <div><div class="mini-label">היום · 26.06.2026</div><div class="big-number">4:35</div><div class="muted">כניסה 08:42 · יציאה פתוחה</div></div>
+              <div class="grid2"><button class="btn">כניסה</button><button class="btn green">יציאה</button></div>
+              <div class="grid3">
+                <div><div class="medium-number">86:20</div><div class="mini-label">חודש</div></div>
+                <div><div class="medium-number">13</div><div class="mini-label">ימי עבודה</div></div>
+                <div><div class="medium-number">2</div><div class="mini-label">לטיפול</div></div>
+              </div>
+            </div>
+            <div class="stack">
+              <div class="row space-between"><h3 style="margin:0">השבוע</h3><div class="month-control"><button class="btn light">‹</button><strong>יוני 2026</strong><button class="btn light">›</button></div></div>
+              <div class="week-strip">
+                <div class="week-day"><div><span class="date">א׳ 21</span><div class="mini-label">עבודה</div></div><span class="hours">8:12</span></div>
+                <div class="week-day"><div><span class="date">ב׳ 22</span><div class="mini-label">עבודה</div></div><span class="hours">8:04</span></div>
+                <div class="week-day"><div><span class="date">ג׳ 23</span><div class="mini-label">חופש</div></div><span class="hours">—</span></div>
+                <div class="week-day active"><div><span class="date">ד׳ 24</span><div class="mini-label">נבחר</div></div><span class="hours">7:55</span></div>
+                <div class="week-day"><div><span class="date">ה׳ 25</span><div class="mini-label">חסר</div></div><span class="hours">—</span></div>
+                <div class="week-day"><div><span class="date">ו׳ 26</span><div class="mini-label">היום</div></div><span class="hours">4:35</span></div>
+                <div class="week-day"><div><span class="date">ש׳ 27</span><div class="mini-label">עתידי</div></div><span class="hours">—</span></div>
+              </div>
+              <div class="panel">
+                <div class="row space-between" style="margin-bottom:12px"><strong>עריכת ד׳ 24.06</strong><span class="day-type">עבודה</span></div>
+                <div class="edit-rail"><div><div class="mini-label">כניסה</div><div class="field">08:10</div></div><div><div class="mini-label">יציאה</div><div class="field">16:05</div></div><div><div class="mini-label">הערה</div><div class="field">פגישה מחוץ למשרד</div></div><button class="btn">שמור</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="c2">
+      <div class="concept-head">
+        <div>
+          <span class="num">02</span>
+          <h2>לוח חודש אמיתי + פאנל עריכה צדדי</h2>
+          <p class="why">היומן נראה כמו יומן. כל יום הוא תא סקירה, והעריכה מתבצעת רק בפאנל צדדי ליום שנבחר.</p>
+        </div>
+        <div class="fit"><span class="tag good">מומלץ</span><span class="tag focus">מאוד ברור</span><span class="tag warn">דורש מעט JS</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><div class="month-control"><button class="btn light">מאי</button><strong>יוני 2026</strong><button class="btn light">יולי</button></div></div>
+          <div class="screen calendar-layout">
+            <div class="stack">
+              <div class="grid3">
+                <div class="panel"><div class="mini-label">שעות</div><div class="medium-number">86:20</div></div>
+                <div class="panel"><div class="mini-label">ימי עבודה</div><div class="medium-number">13</div></div>
+                <div class="panel"><div class="mini-label">חריגים</div><div class="medium-number">2</div></div>
+              </div>
+              <div class="calendar-grid">
+                <div class="mini-label">א׳</div><div class="mini-label">ב׳</div><div class="mini-label">ג׳</div><div class="mini-label">ד׳</div><div class="mini-label">ה׳</div><div class="mini-label">ו׳</div><div class="mini-label">ש׳</div>
+                <div class="cal-cell"><div class="cal-top"><b>1</b><span class="day-type">עבודה</span></div><div class="cal-hours">8:02</div><small>08:04–16:06</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>2</b><span class="day-type">עבודה</span></div><div class="cal-hours">7:48</div><small>08:12–16:00</small></div>
+                <div class="cal-cell selected"><div class="cal-top"><b>3</b><span class="day-type miss">חסר</span></div><div class="cal-hours">—</div><small>דורש השלמה</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>4</b><span class="day-type off">חופש</span></div><div class="cal-hours">—</div><small>מאושר</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>5</b><span class="day-type">עבודה</span></div><div class="cal-hours">8:15</div><small>08:00–16:15</small></div>
+                <div class="cal-cell blank"><b>6</b><span>—</span></div>
+                <div class="cal-cell blank"><b>7</b><span>—</span></div>
+                <div class="cal-cell"><div class="cal-top"><b>8</b><span class="day-type">עבודה</span></div><div class="cal-hours">8:00</div><small>09:00–17:00</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>9</b><span class="day-type">עבודה</span></div><div class="cal-hours">7:55</div><small>08:05–16:00</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>10</b><span class="day-type">עבודה</span></div><div class="cal-hours">8:10</div><small>08:10–16:20</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>11</b><span class="day-type">עבודה</span></div><div class="cal-hours">8:00</div><small>08:30–16:30</small></div>
+                <div class="cal-cell"><div class="cal-top"><b>12</b><span class="day-type miss">פתוח</span></div><div class="cal-hours">4:35</div><small>08:42–עכשיו</small></div>
+              </div>
+            </div>
+            <div class="panel stack">
+              <div><div class="mini-label">יום נבחר</div><h3 style="margin:4px 0 0">03.06.2026</h3><span class="day-type miss">חסר דיווח</span></div>
+              <div class="drawer-line"><span class="mini-label">סוג יום</span><div class="field">עבודה</div></div>
+              <div class="drawer-line"><span class="mini-label">כניסה</span><div class="field">--:--</div></div>
+              <div class="drawer-line"><span class="mini-label">יציאה</span><div class="field">--:--</div></div>
+              <div><div class="mini-label">הערה</div><div class="field">שכחתי לדווח</div></div>
+              <button class="btn">שמור יום</button>
+              <button class="btn ghost">נקה דיווח</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="c3">
+      <div class="concept-head">
+        <div>
+          <span class="num">03</span>
+          <h2>רשימה שבועית צפופה אבל נעימה</h2>
+          <p class="why">למי שרוצה לעבוד מהר: שורה לכל יום, אבל בלי תחושת Excel. רק השדות החשובים גלויים.</p>
+        </div>
+        <div class="fit"><span class="tag focus">יעיל</span><span class="tag">דומה לטופס</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><button class="btn">החתמה עכשיו</button></div>
+          <div class="screen stack">
+            <div class="row space-between"><div><h3 style="margin:0">שבוע 23–29 ביוני</h3><span class="muted">עריכה מהירה, בלי לפתוח מסכים</span></div><div class="month-control"><button class="btn light">‹</button><strong>יוני 2026</strong><button class="btn light">›</button></div></div>
+            <div class="timeline-list">
+              <div class="time-row"><div class="date-box">א׳ 23<small>עבודה</small></div><div class="field small-field">08:10</div><div class="field small-field">16:05</div><span class="day-type">עבודה</span><div><b>7:55</b></div><button class="btn">שמור</button></div>
+              <div class="time-row"><div class="date-box">ב׳ 24<small>עבודה</small></div><div class="field small-field">08:30</div><div class="field small-field">16:40</div><span class="day-type">עבודה</span><div><b>8:10</b></div><button class="btn">שמור</button></div>
+              <div class="time-row issue"><div class="date-box">ג׳ 25<small>לטיפול</small></div><div class="field small-field">--:--</div><div class="field small-field">--:--</div><span class="day-type miss">חסר</span><div><b>—</b></div><button class="btn">השלם</button></div>
+              <div class="time-row"><div class="date-box">ד׳ 26<small>היום</small></div><div class="field small-field">08:42</div><div class="field small-field">פתוח</div><span class="day-type">עבודה</span><div><b>4:35</b></div><button class="btn green">יציאה</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="c4">
+      <div class="concept-head">
+        <div>
+          <span class="num">04</span>
+          <h2>Timesheet נקי ומקצועי</h2>
+          <p class="why">כן טבלה, אבל כזו שבנויה לסריקה: פחות פקדים גלויים, עריכה בלחיצה על תא או כפתור “ערוך”.</p>
+        </div>
+        <div class="fit"><span class="tag">מתאים לדסקטופ</span><span class="tag focus">מהיר לסריקה</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><div class="row"><button class="btn light">ייצוא</button><button class="btn">כניסה</button></div></div>
+          <div class="screen stack">
+            <div class="grid3"><div class="panel"><span class="mini-label">סה״כ</span><div class="medium-number">86:20</div></div><div class="panel"><span class="mini-label">תקן צפוי</span><div class="medium-number">96:00</div></div><div class="panel"><span class="mini-label">פער</span><div class="medium-number" style="color:var(--amber)">-9:40</div></div></div>
+            <div class="timesheet">
+              <div class="sheet-row sheet-head"><div>תאריך</div><div>סטטוס</div><div>כניסה</div><div>יציאה</div><div>סה״כ</div><div>הערה</div><div></div></div>
+              <div class="sheet-row highlight"><div><b>01.06</b><br><small>א׳</small></div><div><span class="day-type">עבודה</span></div><div>08:04</div><div>16:06</div><div><b>8:02</b></div><div></div><div><button class="btn light">ערוך</button></div></div>
+              <div class="sheet-row"><div><b>02.06</b><br><small>ב׳</small></div><div><span class="day-type">עבודה</span></div><div>08:12</div><div>16:00</div><div><b>7:48</b></div><div></div><div><button class="btn light">ערוך</button></div></div>
+              <div class="sheet-row highlight"><div><b>03.06</b><br><small>ג׳</small></div><div><span class="day-type miss">חסר</span></div><div>—</div><div>—</div><div><b>—</b></div><div>נדרש תיקון</div><div><button class="btn">השלם</button></div></div>
+              <div class="sheet-row"><div><b>04.06</b><br><small>ד׳</small></div><div><span class="day-type off">חופש</span></div><div>—</div><div>—</div><div><b>—</b></div><div>חופש</div><div><button class="btn light">ערוך</button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="c5">
+      <div class="concept-head">
+        <div>
+          <span class="num">05</span>
+          <h2>Mobile-first גם בווב</h2>
+          <p class="why">מתאים אם רוב השימוש הוא החתמה מהטלפון. הדסקטופ מציג אותו flow, רק עם אזור מידע נוסף בצד.</p>
+        </div>
+        <div class="fit"><span class="tag good">מעולה למובייל</span><span class="tag">פחות צפוף</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><span class="pill"><span class="status-dot"></span> מחובר</span></div>
+          <div class="screen mobile-preview-wrap">
+            <div class="phone">
+              <div class="phone-screen">
+                <div class="phone-clock">
+                  <div class="mini-label">היום</div>
+                  <div class="big-number">4:35</div>
+                  <div class="muted">08:42 → פתוח</div>
+                  <button class="btn green" style="width:100%; margin-top:16px">החתם יציאה</button>
+                </div>
+                <div class="phone-list">
+                  <div class="phone-day"><div><b>אתמול</b><div class="mini-label">עבודה</div></div><b>8:05</b></div>
+                  <div class="phone-day"><div><b>שלישי</b><div class="mini-label">חסר דיווח</div></div><span class="day-type miss">לטיפול</span></div>
+                  <div class="phone-day"><div><b>שני</b><div class="mini-label">חופש</div></div><span class="day-type off">חופש</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="wide-note">
+              <div class="panel"><h3 style="margin-top:0">למה זה טוב?</h3><p class="muted">החתמה היא הפעולה המרכזית. היומן נמצא מתחתיה כרשימת ימים קצרה, לא כטבלה של חודש שלם.</p></div>
+              <div class="grid3"><div class="panel"><div class="medium-number">86:20</div><div class="mini-label">חודש</div></div><div class="panel"><div class="medium-number">13</div><div class="mini-label">ימים</div></div><div class="panel"><div class="medium-number">2</div><div class="mini-label">לטיפול</div></div></div>
+              <div class="panel"><b>מתי לבחור:</b> אם החוויה במובייל חשובה לפחות כמו הדסקטופ, ורוצים עקביות בין web ל-Expo.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="concept" id="c6">
+      <div class="concept-head">
+        <div>
+          <span class="num">06</span>
+          <h2>חריגים תחילה + יומן מוסתר</h2>
+          <p class="why">הכי מעשי למשתמשים: לא להציג 30 ימים לעריכה. להציג רק מה שדורש תשומת לב, ואת שאר החודש כסיכום.</p>
+        </div>
+        <div class="fit"><span class="tag good">מומלץ מאוד</span><span class="tag focus">פחות עומס</span><span class="tag">פרקטי</span></div>
+      </div>
+      <div class="mock">
+        <div class="app-shell">
+          <div class="app-header"><div class="app-title"><span class="mark">⏱</span> נוכחות</div><div class="row"><button class="btn light">פתח יומן מלא</button><button class="btn">כניסה</button></div></div>
+          <div class="screen review-layout">
+            <div class="stack">
+              <div class="panel row space-between">
+                <div><div class="mini-label">מצב החודש</div><h3 style="margin:4px 0">כמעט מוכן לדו״ח</h3><span class="muted">נשארו 2 ימים לטיפול לפני ייצוא.</span></div>
+                <div style="min-width:220px"><div class="row space-between"><b>86%</b><span class="mini-label">השלמה</span></div><div class="progress"><span style="width:86%"></span></div></div>
+              </div>
+              <div class="exception-list">
+                <div class="exception high"><div class="date-box">03.06<small>ג׳</small></div><div><b>חסר דיווח מלא</b><div class="muted">אין כניסה ואין יציאה. אפשר לסמן עבודה, חופש או מחלה.</div></div><button class="btn">השלם</button></div>
+                <div class="exception high"><div class="date-box">12.06<small>ה׳</small></div><div><b>משמרת פתוחה</b><div class="muted">יש כניסה 08:42 ללא יציאה.</div></div><button class="btn green">סגור יום</button></div>
+                <div class="exception"><div class="date-box">18.06<small>ד׳</small></div><div><b>יום קצר מהתקן</b><div class="muted">דווחו 4:10 שעות. אפשר להשאיר או לתקן.</div></div><button class="btn light">בדוק</button></div>
+              </div>
+            </div>
+            <div class="panel stack">
+              <div><div class="mini-label">החתמה היום</div><div class="big-number">4:35</div><div class="muted">08:42 → פתוח</div></div>
+              <button class="btn green">החתם יציאה</button>
+              <div class="grid2"><div><div class="medium-number">13</div><div class="mini-label">ימים תקינים</div></div><div><div class="medium-number">2</div><div class="mini-label">חריגים</div></div></div>
+              <button class="btn ghost">הצג את כל החודש</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

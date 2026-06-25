@@ -6,6 +6,7 @@ node_modules/
 .next/
 out/
 next-env.d.ts
+*.tsbuildinfo
 
 # turbo
 .turbo/
@@ -18,6 +19,7 @@ build/
 .expo/
 *.orig.*
 web-build/
+expo-env.d.ts
 
 # env
 .env
@@ -33,6 +35,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # editor
+.claude/
 .vscode/*
 !.vscode/extensions.json
 .idea/
