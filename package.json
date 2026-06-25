@@ -13,10 +13,29 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "dev:web": "pnpm --filter @att/web dev",
-    "build:web": "pnpm --filter @att/web build"
+    "build:web": "pnpm --filter @att/web build",
+    "dev:mobile": "pnpm --filter @att/mobile dev",
+    "build:mobile": "pnpm --filter @att/mobile build"
   },
   "devDependencies": {
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2"
+    "typescript": "5.7.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "5.7.2"
+    },
+    "packageExtensions": {
+      "next@*": {
+        "peerDependencies": {
+          "@types/react": "*"
+        },
+        "peerDependenciesMeta": {
+          "@types/react": {
+            "optional": true
+          }
+        }
+      }
+    }
   }
 }
