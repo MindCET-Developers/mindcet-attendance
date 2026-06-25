@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>גלריית עיצובים · אפליקציית נוכחות</title>
+<title>עיצוב · אפליקציית דיווח נוכחות עצמי</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,94 +15,57 @@
   .hero h1{font-size:clamp(26px,4vw,38px);font-weight:900}
   .hero p{color:#c9cde0;margin-top:8px;font-size:16px}
   .hero a.back{display:inline-block;margin-top:16px;color:#c7cbff;font-size:14px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:999px}
-  .wrap{max-width:1080px;margin:0 auto;padding:30px 24px 60px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-  @media(max-width:780px){.grid{grid-template-columns:1fr}}
-  .card{background:#fff;border:1px solid #e7e9f2;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(16,21,33,.07);display:flex;flex-direction:column}
-  .prev{height:150px;position:relative;display:flex;align-items:center;justify-content:center;gap:8px}
-  .prev .card-mini{width:54px;height:88px;border-radius:10px;background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.18);display:flex;flex-direction:column;padding:7px;gap:5px}
-  .prev .card-mini .b{height:7px;border-radius:3px;background:#dfe3f2}
-  .prev .card-mini .btn{margin-top:auto;height:16px;border-radius:6px}
-  .body{padding:20px}
-  .body h3{font-size:19px;font-weight:900;display:flex;align-items:center;gap:9px}
+  .wrap{max-width:980px;margin:0 auto;padding:30px 24px 60px}
+  .tag{font-size:13px;font-weight:800;letter-spacing:.05em;color:var(--brand);text-transform:uppercase;margin-bottom:10px}
+  .card{background:#fff;border:1px solid #e7e9f2;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(16,21,33,.07)}
+  .prev{height:160px;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#11151f,#2a3150)}
+  .prev .m{width:60px;height:96px;border-radius:11px;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.25);display:flex;flex-direction:column;padding:8px;gap:6px}
+  .prev .m .b{height:8px;border-radius:4px;background:#dfe3f2}
+  .prev .m .btn{margin-top:auto;height:18px;border-radius:7px}
+  .body{padding:22px}
+  .body h2{font-size:21px;font-weight:900;display:flex;align-items:center;gap:9px}
   .reco{font-size:11px;font-weight:800;background:#0f9d6b;color:#fff;padding:3px 9px;border-radius:999px}
-  .body p{color:var(--soft);font-size:14px;margin:8px 0 14px;min-height:44px}
-  .sw{display:flex;gap:7px;margin-bottom:16px}
+  .body p{color:var(--soft);font-size:14.5px;margin:10px 0 16px}
+  .sw{display:flex;gap:7px;margin-bottom:18px}
   .sw i{width:28px;height:28px;border-radius:8px;border:1px solid rgba(0,0,0,.06)}
   .open{display:inline-block;background:var(--brand);color:#fff;font-weight:800;font-size:14px;padding:11px 18px;border-radius:11px;text-decoration:none}
-  .open.alt{background:#11151f}
+  .archive{margin-top:34px;border-top:1px dashed #d8dced;padding-top:24px}
+  .archive h3{font-size:15px;font-weight:800}
+  .archive p{color:var(--soft);font-size:13.5px;margin-top:6px}
+  .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .links a{font-size:13px;font-weight:700;color:var(--soft);text-decoration:none;background:#fff;border:1px solid #e7e9f2;padding:8px 14px;border-radius:999px}
 </style>
 </head>
 <body>
 <div class="hero">
-  <h1>עיצובים · אפליקציית נוכחות</h1>
-  <p>4 כיווני עיצוב + מוקאפ "שימוש אישי" — לחצו על כרטיס לפתיחת המוקאפ המלא</p>
-  <a class="back" href="../attendance-app-plan.html">→ חזרה לתוכנית הפעולה</a>
+  <h1>עיצוב · דיווח נוכחות עצמי</h1>
+  <p>המוקאפ הפעיל של ה-MVP — מסך החתמה + דו״ח חודשי</p>
+  <a class="back" href="../attendance-app-plan.html">→ חזרה לתוכנית</a>
 </div>
 <div class="wrap">
-  <div class="grid">
-
-    <div class="card">
-      <div class="prev" style="background:linear-gradient(135deg,#eef0ff,#fff)">
-        <div class="card-mini"><div class="b" style="width:70%"></div><div class="b" style="width:90%"></div><div class="b" style="width:60%"></div><div class="btn" style="background:#4f46e5"></div></div>
-      </div>
-      <div class="body">
-        <h3>1 · Modern Clean SaaS <span class="reco">מומלץ</span></h3>
-        <p>לבן נקי, אקצנט אינדיגו יחיד, מרווחים גדולים. סגנון Linear/Notion.</p>
-        <div class="sw"><i style="background:#4f46e5"></i><i style="background:#eef0ff"></i><i style="background:#11151f"></i><i style="background:#0f9d6b"></i><i style="background:#fff"></i></div>
-        <a class="open" href="design-1-modern.html">פתח מוקאפ ←</a>
-      </div>
+  <div class="tag">העיצוב הפעיל</div>
+  <div class="card">
+    <div class="prev">
+      <div class="m"><div class="b" style="width:60%;background:#4f46e5"></div><div class="b" style="width:90%"></div><div class="b" style="width:75%"></div><div class="btn" style="background:#0f9d6b"></div></div>
+      <div class="m"><div class="b" style="width:80%"></div><div class="b" style="width:90%"></div><div class="b" style="width:90%"></div><div class="b" style="width:70%"></div></div>
     </div>
-
-    <div class="card">
-      <div class="prev" style="background:linear-gradient(135deg,#dbe4f3,#eef2f9)">
-        <div class="card-mini"><div class="b" style="width:70%;background:#1e3a8a"></div><div class="b" style="width:90%"></div><div class="b" style="width:60%"></div><div class="btn" style="background:#1e3a8a"></div></div>
-      </div>
-      <div class="body">
-        <h3>2 · Corporate Trust</h3>
-        <p>כחול עמוק ואפור, טבלאות צפופות, מראה ארגוני רציני. מתאים ל-HR ושכר.</p>
-        <div class="sw"><i style="background:#1e3a8a"></i><i style="background:#3b5ba5"></i><i style="background:#64748b"></i><i style="background:#e2e8f0"></i><i style="background:#fff"></i></div>
-        <a class="open" href="design-2-corporate.html">פתח מוקאפ ←</a>
-      </div>
+    <div class="body">
+      <h2>אפליקציית דיווח אישי <span class="reco">Modern Clean</span></h2>
+      <p>מסך מובייל להחתמה (כניסה/יציאה + שעון) ומסך דו״ח חודשי עם תבנית ייצוא (Excel/CSV/Google Sheets), onboarding וסוגי יום (עבודה/חופש/מחלה/חג). לבן נקי, אקצנט אינדיגו, RTL.</p>
+      <div class="sw"><i style="background:#4f46e5"></i><i style="background:#0f9d6b"></i><i style="background:#d9870b"></i><i style="background:#dc2b4b"></i><i style="background:#0891b2"></i></div>
+      <a class="open" href="design-5-personal.html">פתח מוקאפ ←</a>
     </div>
+  </div>
 
-    <div class="card">
-      <div class="prev" style="background:linear-gradient(135deg,#ffe9d6,#fff4ec)">
-        <div class="card-mini"><div class="b" style="width:70%;background:#fb7185"></div><div class="b" style="width:90%"></div><div class="b" style="width:60%"></div><div class="btn" style="background:#fb7185"></div></div>
-      </div>
-      <div class="body">
-        <h3>3 · Friendly Soft</h3>
-        <p>פסטל חמים, פינות רכות, כפתור החתמה ענק ומיקרו-אנימציות. נעים לשימוש יומי.</p>
-        <div class="sw"><i style="background:#fb7185"></i><i style="background:#fdba74"></i><i style="background:#34d399"></i><i style="background:#fff4ec"></i><i style="background:#fff"></i></div>
-        <a class="open" href="design-3-friendly.html">פתח מוקאפ ←</a>
-      </div>
+  <div class="archive">
+    <h3>🗄️ ארכיון — כיווני עיצוב מוקדמים</h3>
+    <p>נבחנו בשלבי התכנון של המוצר הארגוני הרחב (לפני המיקוד בדיווח אישי). נשמרים כהיסטוריה בלבד.</p>
+    <div class="links">
+      <a href="archive/design-1-modern.html">1 · Modern Clean</a>
+      <a href="archive/design-2-corporate.html">2 · Corporate Trust</a>
+      <a href="archive/design-3-friendly.html">3 · Friendly Soft</a>
+      <a href="archive/design-4-dark.html">4 · Focus Dark</a>
     </div>
-
-    <div class="card">
-      <div class="prev" style="background:linear-gradient(135deg,#0f1222,#1b2036)">
-        <div class="card-mini" style="background:#161c33"><div class="b" style="width:70%;background:#22d3ee"></div><div class="b" style="width:90%;background:#2a3150"></div><div class="b" style="width:60%;background:#2a3150"></div><div class="btn" style="background:#22d3ee"></div></div>
-      </div>
-      <div class="body">
-        <h3>4 · Focus Dark</h3>
-        <p>מצב כהה, אקצנט נאון (טורקיז/לימון), דשבורד עתיר-נתונים למסכי בקרה.</p>
-        <div class="sw"><i style="background:#0f1222"></i><i style="background:#22d3ee"></i><i style="background:#a3e635"></i><i style="background:#1b2036"></i><i style="background:#2a3150"></i></div>
-        <a class="open alt" href="design-4-dark.html">פתח מוקאפ ←</a>
-      </div>
-    </div>
-
-    <div class="card" style="grid-column:1/-1">
-      <div class="prev" style="background:linear-gradient(135deg,#11151f,#222a44);height:130px">
-        <div class="card-mini"><div class="b" style="width:60%;background:#4f46e5"></div><div class="b" style="width:90%"></div><div class="b" style="width:75%"></div><div class="btn" style="background:#0f9d6b"></div></div>
-        <div class="card-mini"><div class="b" style="width:80%"></div><div class="b" style="width:90%"></div><div class="b" style="width:90%"></div><div class="b" style="width:70%"></div></div>
-      </div>
-      <div class="body">
-        <h3>★ שימוש אישי <span class="reco" style="background:#4f46e5">מצב חדש</span></h3>
-        <p>מצב למשתמש יחיד: מעקב עצמי אחר נוכחות + הפקת קובץ נוכחות חודשי מסודר (Excel/CSV/PDF) מוכן להגשה למעסיק. כולל מסך onboarding לבחירת מצב, יומן עם סוג יום (עבודה/חופש/מחלה/חג), ומסך דו״ח חודשי. מוצג בעיצוב Modern Clean.</p>
-        <div class="sw"><i style="background:#4f46e5"></i><i style="background:#0f9d6b"></i><i style="background:#d9870b"></i><i style="background:#dc2b4b"></i><i style="background:#0891b2"></i></div>
-        <a class="open" href="design-5-personal.html">פתח מוקאפ ←</a>
-      </div>
-    </div>
-
   </div>
 </div>
 </body>
