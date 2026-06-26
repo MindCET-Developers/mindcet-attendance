@@ -23,7 +23,10 @@
   },
   "pnpm": {
     "overrides": {
+      "@xmldom/xmldom": "0.8.13",
+      "js-yaml": "4.2.0",
       "postcss": "8.5.15",
+      "tar": "7.5.16",
       "typescript": "5.7.2"
     },
     "packageExtensions": {
