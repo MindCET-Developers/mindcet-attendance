@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   DAY_TYPE_LABELS,
@@ -21,7 +22,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type PageProps = {
-  searchParams?: Promise<{ month?: string; day?: string }>;
+  searchParams?: Promise<{
+    month?: string;
+    day?: string;
+    status?: string;
+    message?: string;
+  }>;
 };
 
 type ProfileRow = {
@@ -48,9 +54,7 @@ type AttendanceRow = Pick<
 type DayView = {
   date: string;
   weekday: string;
-  record: AttendanceRow | null;
-  clockInValue: string;
-  clockOutValue: string;
+  records: AttendanceRow[];
   totalMinutes: number;
 };
 
@@ -89,6 +93,40 @@ function weekDates(selectedDate: string): string[] {
 
 function isoToTimeValue(iso: string | null, timezone: string): string {
   return formatClockTime(iso, timezone).replace(/^24:/, "00:");
+}
+
+function earliestIso(
+  records: AttendanceRow[],
+  field: "clock_in" | "clock_out",
+): string | null {
+  const values = records
+    .map((record) => record[field])
+    .filter((value): value is string => Boolean(value));
+  if (!values.length) return null;
+  return values.reduce((min, value) => (value < min ? value : min));
+}
+
+function latestIso(
+  records: AttendanceRow[],
+  field: "clock_in" | "clock_out",
+): string | null {
+  const values = records
+    .map((record) => record[field])
+    .filter((value): value is string => Boolean(value));
+  if (!values.length) return null;
+  return values.reduce((max, value) => (value > max ? value : max));
+}
+
+/** A day needs attention if it has no record yet, or an open (unfinished) work shift. */
+function dayNeedsAttention(
+  day: Pick<DayView, "date" | "records">,
+  today: string,
+): boolean {
+  if (day.date > today) return false;
+  if (day.records.length === 0) return true;
+  return day.records.some(
+    (record) => record.day_type === "work" && record.clock_in && !record.clock_out,
+  );
 }
 
 function timezoneOffset(date: Date, timezone: string): string {
@@ -130,6 +168,20 @@ function localTimeToIso(
   return new Date(`${dateKey}T${timeValue}:00${offset}`).toISOString();
 }
 
+function buildUrl(params: {
+  month: string;
+  day?: string;
+  status?: "success" | "error";
+  message?: string;
+}): string {
+  const usp = new URLSearchParams();
+  usp.set("month", params.month);
+  if (params.day) usp.set("day", params.day);
+  if (params.status) usp.set("status", params.status);
+  if (params.message) usp.set("message", params.message);
+  return `/app?${usp.toString()}`;
+}
+
 async function getCurrentUser() {
   const supabase = await createClient();
   const {
@@ -139,51 +191,69 @@ async function getCurrentUser() {
   return { supabase, user };
 }
 
-async function clockIn() {
-  "use server";
-
-  const { supabase, user } = await getCurrentUser();
-  const today = toDateKey(new Date());
-  const now = new Date().toISOString();
-
-  const { data: existing } = await supabase
-    .from("attendance_records")
-    .select("id, clock_in")
-    .eq("user_id", user.id)
-    .eq("work_date", today)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (existing) {
-    await supabase
-      .from("attendance_records")
-      .update({
-        clock_in: existing.clock_in ?? now,
-        clock_out: null,
-        day_type: "work",
-        source: "realtime",
-      })
-      .eq("id", existing.id);
-  } else {
-    await supabase.from("attendance_records").insert({
-      user_id: user.id,
-      work_date: today,
-      clock_in: now,
-      day_type: "work",
-      source: "realtime",
-    });
-  }
-
-  revalidatePath("/app");
+function redirectTarget(formData: FormData, fallbackDate: string) {
+  const month = String(
+    formData.get("redirect_month") || monthKey(fallbackDate),
+  );
+  const day = String(formData.get("redirect_day") || fallbackDate);
+  return { month, day };
 }
 
-async function clockOut() {
+async function clockIn(formData: FormData) {
   "use server";
 
   const { supabase, user } = await getCurrentUser();
   const today = toDateKey(new Date());
   const now = new Date().toISOString();
+  const { month, day } = redirectTarget(formData, today);
+
+  const { data: todays } = await supabase
+    .from("attendance_records")
+    .select("id, clock_in, clock_out, day_type")
+    .eq("user_id", user.id)
+    .eq("work_date", today)
+    .returns<Pick<AttendanceRow, "id" | "clock_in" | "clock_out" | "day_type">[]>();
+
+  const open = (todays ?? []).find((record) => record.clock_in && !record.clock_out);
+  if (open) {
+    redirect(
+      buildUrl({ month, day, status: "error", message: "כבר רשומה משמרת פתוחה להיום" }),
+    );
+  }
+
+  // Reuse an empty work-type placeholder row instead of creating a duplicate blank one.
+  const placeholder = (todays ?? []).find(
+    (record) => !record.clock_in && !record.clock_out && record.day_type === "work",
+  );
+
+  const { error } = placeholder
+    ? await supabase
+        .from("attendance_records")
+        .update({ clock_in: now, source: "realtime" })
+        .eq("id", placeholder.id)
+    : await supabase.from("attendance_records").insert({
+        user_id: user.id,
+        work_date: today,
+        clock_in: now,
+        day_type: "work",
+        source: "realtime",
+      });
+
+  revalidatePath("/app");
+  redirect(
+    error
+      ? buildUrl({ month, day, status: "error", message: "החתמת הכניסה נכשלה, נסו שוב" })
+      : buildUrl({ month, day, status: "success", message: "כניסה נרשמה בהצלחה" }),
+  );
+}
+
+async function clockOut(formData: FormData) {
+  "use server";
+
+  const { supabase, user } = await getCurrentUser();
+  const today = toDateKey(new Date());
+  const now = new Date().toISOString();
+  const { month, day } = redirectTarget(formData, today);
 
   const { data: existing } = await supabase
     .from("attendance_records")
@@ -196,14 +266,21 @@ async function clockOut() {
     .limit(1)
     .maybeSingle();
 
-  if (existing) {
-    await supabase
-      .from("attendance_records")
-      .update({ clock_out: now })
-      .eq("id", existing.id);
+  if (!existing) {
+    redirect(buildUrl({ month, day, status: "error", message: "לא נמצאה משמרת פתוחה" }));
   }
 
+  const { error } = await supabase
+    .from("attendance_records")
+    .update({ clock_out: now })
+    .eq("id", existing.id);
+
   revalidatePath("/app");
+  redirect(
+    error
+      ? buildUrl({ month, day, status: "error", message: "החתמת היציאה נכשלה, נסו שוב" })
+      : buildUrl({ month, day, status: "success", message: "יציאה נרשמה בהצלחה" }),
+  );
 }
 
 async function saveDay(formData: FormData) {
@@ -216,11 +293,20 @@ async function saveDay(formData: FormData) {
   const clockOutValue = String(formData.get("clock_out") ?? "");
   const dayType = String(formData.get("day_type") ?? "work") as DayType;
   const note = String(formData.get("note") ?? "").trim();
+  const { month, day } = redirectTarget(formData, workDate || toDateKey(new Date()));
 
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(workDate)) return;
-  if (!DAY_TYPE_ORDER.includes(dayType)) return;
-  if (clockInValue && !isValidTimeValue(clockInValue)) return;
-  if (clockOutValue && !isValidTimeValue(clockOutValue)) return;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(workDate)) {
+    redirect(buildUrl({ month, day, status: "error", message: "תאריך לא תקין" }));
+  }
+  if (!DAY_TYPE_ORDER.includes(dayType)) {
+    redirect(buildUrl({ month, day, status: "error", message: "סוג יום לא תקין" }));
+  }
+  if (clockInValue && !isValidTimeValue(clockInValue)) {
+    redirect(buildUrl({ month, day, status: "error", message: "שעת כניסה לא תקינה" }));
+  }
+  if (clockOutValue && !isValidTimeValue(clockOutValue)) {
+    redirect(buildUrl({ month, day, status: "error", message: "שעת יציאה לא תקינה" }));
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -229,42 +315,186 @@ async function saveDay(formData: FormData) {
     .single<Pick<ProfileRow, "timezone">>();
   const timezone = normalizeTimezone(profile?.timezone);
 
-  const clockIn = localTimeToIso(workDate, clockInValue, timezone);
-  const clockOut = localTimeToIso(workDate, clockOutValue, timezone);
-  const isEmptyWorkDay = !clockIn && !clockOut && dayType === "work" && !note;
+  const clockInIso = localTimeToIso(workDate, clockInValue, timezone);
+  const clockOutIso = localTimeToIso(workDate, clockOutValue, timezone);
+  const isEmptyWorkDay = !clockInIso && !clockOutIso && dayType === "work" && !note;
+
+  if (!recordId && isEmptyWorkDay) {
+    // Blank "add segment" form submitted with nothing filled in — nothing to do.
+    redirect(buildUrl({ month, day }));
+  }
 
   if (recordId && isEmptyWorkDay) {
-    await supabase
+    const { error } = await supabase
       .from("attendance_records")
       .delete()
       .eq("id", recordId)
       .eq("user_id", user.id);
     revalidatePath("/app");
-    return;
+    redirect(
+      error
+        ? buildUrl({ month, day, status: "error", message: "מחיקת הרשומה נכשלה" })
+        : buildUrl({ month, day, status: "success", message: "הרשומה הוסרה" }),
+    );
   }
 
   const payload = {
     user_id: user.id,
     work_date: workDate,
-    clock_in: clockIn,
-    clock_out: clockOut,
+    clock_in: clockInIso,
+    clock_out: clockOutIso,
     day_type: dayType,
     note: note || null,
     is_edited: true,
-    source: "manual",
+    source: "manual" as const,
   };
 
-  if (recordId) {
-    await supabase
-      .from("attendance_records")
-      .update(payload)
-      .eq("id", recordId)
-      .eq("user_id", user.id);
-  } else if (!isEmptyWorkDay) {
-    await supabase.from("attendance_records").insert(payload);
-  }
+  const { error } = recordId
+    ? await supabase
+        .from("attendance_records")
+        .update(payload)
+        .eq("id", recordId)
+        .eq("user_id", user.id)
+    : await supabase.from("attendance_records").insert(payload);
 
   revalidatePath("/app");
+  redirect(
+    error
+      ? buildUrl({ month, day, status: "error", message: "שמירת היום נכשלה" })
+      : buildUrl({ month, day, status: "success", message: "היום נשמר" }),
+  );
+}
+
+async function deleteRecord(formData: FormData) {
+  "use server";
+
+  const { supabase, user } = await getCurrentUser();
+  const recordId = String(formData.get("record_id") ?? "");
+  const { month, day } = redirectTarget(formData, toDateKey(new Date()));
+
+  if (!recordId) {
+    redirect(buildUrl({ month, day, status: "error", message: "לא נמצאה רשומה למחיקה" }));
+  }
+
+  const { error } = await supabase
+    .from("attendance_records")
+    .delete()
+    .eq("id", recordId)
+    .eq("user_id", user.id);
+
+  revalidatePath("/app");
+  redirect(
+    error
+      ? buildUrl({ month, day, status: "error", message: "מחיקת המשמרת נכשלה" })
+      : buildUrl({ month, day, status: "success", message: "המשמרת נמחקה" }),
+  );
+}
+
+function SegmentForm({
+  workDate,
+  month,
+  day,
+  record,
+  timezone,
+  label,
+  showDelete,
+}: {
+  workDate: string;
+  month: string;
+  day: string;
+  record: AttendanceRow | null;
+  timezone: string;
+  label: string;
+  showDelete?: boolean;
+}) {
+  const fieldId = record?.id ?? "new";
+  const clockInValue = isoToTimeValue(record?.clock_in ?? null, timezone);
+  const clockOutValue = isoToTimeValue(record?.clock_out ?? null, timezone);
+
+  return (
+    <div className="rounded-lg border border-dashed p-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="text-sm font-bold text-muted-foreground">{label}</p>
+        {record?.is_edited ? (
+          <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-semibold text-secondary-foreground">
+            נערך ידנית
+          </span>
+        ) : null}
+      </div>
+      <form
+        action={saveDay}
+        className="grid gap-3 md:grid-cols-[1fr_1fr_1.1fr_1.6fr_auto] md:items-end"
+      >
+        <input type="hidden" name="work_date" value={workDate} />
+        <input type="hidden" name="record_id" value={record?.id ?? ""} />
+        <input type="hidden" name="redirect_month" value={month} />
+        <input type="hidden" name="redirect_day" value={day} />
+        <div className="space-y-1.5">
+          <Label htmlFor={`clock-in-${fieldId}`}>כניסה</Label>
+          <Input
+            id={`clock-in-${fieldId}`}
+            name="clock_in"
+            type="time"
+            defaultValue={clockInValue}
+            className="h-11"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={`clock-out-${fieldId}`}>יציאה</Label>
+          <Input
+            id={`clock-out-${fieldId}`}
+            name="clock_out"
+            type="time"
+            defaultValue={clockOutValue}
+            className="h-11"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={`day-type-${fieldId}`}>סוג יום</Label>
+          <select
+            id={`day-type-${fieldId}`}
+            name="day_type"
+            defaultValue={record?.day_type ?? "work"}
+            className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm shadow-sm"
+          >
+            {DAY_TYPE_ORDER.map((type) => (
+              <option key={type} value={type}>
+                {DAY_TYPE_LABELS[type]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor={`note-${fieldId}`}>הערה</Label>
+          <Input
+            id={`note-${fieldId}`}
+            name="note"
+            defaultValue={record?.note ?? ""}
+            placeholder="אופציונלי"
+            className="h-11"
+          />
+        </div>
+        <Button type="submit" className="h-11">
+          שמור
+        </Button>
+      </form>
+      {showDelete && record ? (
+        <form action={deleteRecord} className="mt-2 flex justify-end">
+          <input type="hidden" name="record_id" value={record.id} />
+          <input type="hidden" name="redirect_month" value={month} />
+          <input type="hidden" name="redirect_day" value={day} />
+          <Button
+            type="submit"
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+          >
+            הסר משמרת זו
+          </Button>
+        </form>
+      ) : null}
+    </div>
+  );
 }
 
 export default async function AppHomePage({ searchParams }: PageProps) {
@@ -300,36 +530,46 @@ export default async function AppHomePage({ searchParams }: PageProps) {
     .order("created_at", { ascending: true })
     .returns<AttendanceRow[]>();
 
-  const recordByDate = new Map<string, AttendanceRow>();
-  for (const record of records ?? []) recordByDate.set(record.work_date, record);
+  const recordsByDate = new Map<string, AttendanceRow[]>();
+  for (const record of records ?? []) {
+    const list = recordsByDate.get(record.work_date) ?? [];
+    list.push(record);
+    recordsByDate.set(record.work_date, list);
+  }
 
   const days: DayView[] = monthDays.map((date) => {
-    const record = recordByDate.get(date) ?? null;
+    const dayRecords = recordsByDate.get(date) ?? [];
     return {
       date,
       weekday: weekdayLabel(date),
-      record,
-      clockInValue: isoToTimeValue(record?.clock_in ?? null, timezone),
-      clockOutValue: isoToTimeValue(record?.clock_out ?? null, timezone),
-      totalMinutes: minutesBetween(record?.clock_in ?? null, record?.clock_out ?? null),
+      records: dayRecords,
+      totalMinutes: dayRecords.reduce(
+        (sum, record) => sum + minutesBetween(record.clock_in, record.clock_out),
+        0,
+      ),
     };
   });
 
-  const todayRecord = recordByDate.get(today) ?? null;
-  const isClockedIn = Boolean(todayRecord?.clock_in && !todayRecord.clock_out);
+  const todayRecords = recordsByDate.get(today) ?? [];
+  const isClockedIn = todayRecords.some(
+    (record) => record.clock_in && !record.clock_out,
+  );
   const monthTotal = days.reduce((sum, day) => sum + day.totalMinutes, 0);
   const completedDays = days.filter((day) => day.totalMinutes > 0).length;
   const missingWorkDays = days.filter((day) => {
     if (day.date > today) return false;
-    const record = day.record;
-    return !record || (record.day_type === "work" && day.totalMinutes === 0);
+    if (day.records.length === 0) return true;
+    return (
+      day.records.every((record) => record.day_type === "work") &&
+      day.totalMinutes === 0
+    );
   }).length;
-  const todayMinutes = minutesBetween(
-    todayRecord?.clock_in ?? null,
-    todayRecord?.clock_out ?? null,
+  const todayMinutes = todayRecords.reduce(
+    (sum, record) => sum + minutesBetween(record.clock_in, record.clock_out),
+    0,
   );
-  const todayClockIn = isoToTimeValue(todayRecord?.clock_in ?? null, timezone);
-  const todayClockOut = isoToTimeValue(todayRecord?.clock_out ?? null, timezone);
+  const todayClockIn = isoToTimeValue(earliestIso(todayRecords, "clock_in"), timezone);
+  const todayClockOut = isoToTimeValue(latestIso(todayRecords, "clock_out"), timezone);
   const requestedDay = isValidDateKey(params?.day) ? params.day : undefined;
   const selectedDate =
     requestedDay && monthKey(requestedDay) === selectedMonth
@@ -339,24 +579,23 @@ export default async function AppHomePage({ searchParams }: PageProps) {
         : monthStart;
   const selectedDay =
     days.find((day) => day.date === selectedDate) ?? days[0];
-  const selectedRecord = selectedDay?.record ?? null;
   const selectedWeek = weekDates(selectedDate).map((date) => {
     const inSelectedMonth = monthKey(date) === selectedMonth;
-    const record = inSelectedMonth ? recordByDate.get(date) ?? null : null;
+    const dayRecords = inSelectedMonth ? recordsByDate.get(date) ?? [] : [];
     return {
       date,
       inSelectedMonth,
-      record,
-      totalMinutes: minutesBetween(record?.clock_in ?? null, record?.clock_out ?? null),
+      records: dayRecords,
+      totalMinutes: dayRecords.reduce(
+        (sum, record) => sum + minutesBetween(record.clock_in, record.clock_out),
+        0,
+      ),
     };
   });
-  const attentionDays = days
-    .filter((day) => {
-      if (day.date > today) return false;
-      if (!day.record) return true;
-      return day.record.day_type === "work" && !day.record.clock_out;
-    })
-    .slice(0, 4);
+  const attentionDays = days.filter((day) => dayNeedsAttention(day, today)).slice(0, 4);
+
+  const statusType =
+    params?.status === "error" ? "error" : params?.status === "success" ? "success" : null;
 
   return (
     <div className="space-y-5">
@@ -387,6 +626,21 @@ export default async function AppHomePage({ searchParams }: PageProps) {
         </div>
       </div>
 
+      {statusType && params?.message ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className={[
+            "rounded-lg border px-4 py-3 text-sm font-medium",
+            statusType === "success"
+              ? "border-success/30 bg-success/10 text-success"
+              : "border-destructive/30 bg-destructive/10 text-destructive",
+          ].join(" ")}
+        >
+          {params.message}
+        </div>
+      ) : null}
+
       <section className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
         <aside className="rounded-xl border bg-card p-5 shadow-sm">
           <div className="flex items-center justify-between gap-3">
@@ -399,6 +653,8 @@ export default async function AppHomePage({ searchParams }: PageProps) {
               </p>
             </div>
             <span
+              role="status"
+              aria-label={isClockedIn ? "משמרת פתוחה כרגע" : "אינך מחובר כרגע"}
               className={[
                 "rounded-full px-3 py-1 text-xs font-bold",
                 isClockedIn
@@ -412,15 +668,24 @@ export default async function AppHomePage({ searchParams }: PageProps) {
 
           <p className="mt-3 text-sm text-muted-foreground">
             כניסה {todayClockIn || "--:--"} · יציאה {todayClockOut || "--:--"}
+            {todayRecords.length > 1 ? ` · ${todayRecords.length} משמרות` : ""}
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-2">
             <form action={clockIn}>
-              <Button className="h-14 w-full text-base" disabled={isClockedIn}>
+              <input type="hidden" name="redirect_month" value={selectedMonth} />
+              <input type="hidden" name="redirect_day" value={selectedDate} />
+              <Button
+                className="h-14 w-full text-base"
+                disabled={isClockedIn}
+                aria-pressed={isClockedIn}
+              >
                 כניסה
               </Button>
             </form>
             <form action={clockOut}>
+              <input type="hidden" name="redirect_month" value={selectedMonth} />
+              <input type="hidden" name="redirect_day" value={selectedDate} />
               <Button
                 className="h-14 w-full text-base"
                 variant="success"
@@ -478,16 +743,13 @@ export default async function AppHomePage({ searchParams }: PageProps) {
               {selectedWeek.map((day) => {
                 const isSelected = day.date === selectedDate;
                 const isToday = day.date === today;
-                const hasIssue =
-                  day.inSelectedMonth &&
-                  day.date <= today &&
-                  (!day.record ||
-                    (day.record.day_type === "work" && !day.record.clock_out));
+                const hasIssue = day.inSelectedMonth && dayNeedsAttention(day, today);
 
                 return (
                   <Link
                     key={day.date}
                     href={`/app?month=${monthKey(day.date)}&day=${day.date}`}
+                    aria-current={isToday ? "date" : undefined}
                     className={[
                       "min-h-28 rounded-xl border bg-background p-3 text-foreground no-underline transition-colors",
                       isSelected ? "border-primary ring-2 ring-primary/10" : "",
@@ -513,8 +775,10 @@ export default async function AppHomePage({ searchParams }: PageProps) {
                         {day.totalMinutes > 0 ? formatMinutes(day.totalMinutes) : "—"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {day.record
-                          ? DAY_TYPE_LABELS[day.record.day_type]
+                        {day.records.length
+                          ? day.records.length > 1
+                            ? `${day.records.length} משמרות`
+                            : DAY_TYPE_LABELS[day.records[0].day_type]
                           : hasIssue
                             ? "חסר דיווח"
                             : "אין דיווח"}
@@ -527,19 +791,16 @@ export default async function AppHomePage({ searchParams }: PageProps) {
           </div>
 
           {selectedDay ? (
-            <form action={saveDay} className="rounded-xl border bg-card p-5 shadow-sm">
-              <input type="hidden" name="work_date" value={selectedDay.date} />
-              <input type="hidden" name="record_id" value={selectedRecord?.id ?? ""} />
-
-              <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+            <div className="rounded-xl border bg-card p-5 shadow-sm">
+              <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">יום נבחר</p>
                   <h2 className="text-2xl font-extrabold">
                     {selectedDay.date} · {selectedDay.weekday}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    {selectedRecord?.is_edited
-                      ? "נערך ידנית"
+                    {selectedDay.records.length > 1
+                      ? `${selectedDay.records.length} משמרות ביום זה`
                       : "אפשר להשלים או לתקן את היום הזה בלבד"}
                   </p>
                 </div>
@@ -553,57 +814,36 @@ export default async function AppHomePage({ searchParams }: PageProps) {
                 </div>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-[1fr_1fr_1.1fr_1.6fr_auto] md:items-end">
-                <div className="space-y-1.5">
-                  <Label htmlFor="selected-clock-in">כניסה</Label>
-                  <Input
-                    id="selected-clock-in"
-                    name="clock_in"
-                    type="time"
-                    defaultValue={selectedDay.clockInValue}
-                    className="h-11"
+              <div className="space-y-3">
+                {selectedDay.records.map((record, index) => (
+                  <SegmentForm
+                    key={record.id}
+                    workDate={selectedDay.date}
+                    month={selectedMonth}
+                    day={selectedDate}
+                    record={record}
+                    timezone={timezone}
+                    label={
+                      selectedDay.records.length > 1
+                        ? `משמרת ${index + 1}`
+                        : "פרטי היום"
+                    }
+                    showDelete
                   />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="selected-clock-out">יציאה</Label>
-                  <Input
-                    id="selected-clock-out"
-                    name="clock_out"
-                    type="time"
-                    defaultValue={selectedDay.clockOutValue}
-                    className="h-11"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="selected-day-type">סוג יום</Label>
-                  <select
-                    id="selected-day-type"
-                    name="day_type"
-                    defaultValue={selectedRecord?.day_type ?? "work"}
-                    className="h-11 w-full rounded-md border border-input bg-card px-3 text-sm shadow-sm"
-                  >
-                    {DAY_TYPE_ORDER.map((type) => (
-                      <option key={type} value={type}>
-                        {DAY_TYPE_LABELS[type]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="selected-note">הערה</Label>
-                  <Input
-                    id="selected-note"
-                    name="note"
-                    defaultValue={selectedRecord?.note ?? ""}
-                    placeholder="אופציונלי"
-                    className="h-11"
-                  />
-                </div>
-                <Button type="submit" className="h-11">
-                  שמור
-                </Button>
+                ))}
+
+                <SegmentForm
+                  workDate={selectedDay.date}
+                  month={selectedMonth}
+                  day={selectedDate}
+                  record={null}
+                  timezone={timezone}
+                  label={
+                    selectedDay.records.length ? "הוספת משמרת נוספת" : "פרטי היום"
+                  }
+                />
               </div>
-            </form>
+            </div>
           ) : null}
         </div>
       </section>
@@ -621,7 +861,7 @@ export default async function AppHomePage({ searchParams }: PageProps) {
                 >
                   <span className="font-bold">{day.date}</span>
                   <span className="text-muted-foreground">
-                    {day.record ? "משמרת פתוחה" : "חסר דיווח"}
+                    {day.records.length ? "משמרת פתוחה" : "חסר דיווח"}
                   </span>
                 </Link>
               ))
@@ -634,22 +874,20 @@ export default async function AppHomePage({ searchParams }: PageProps) {
           <h2 className="text-lg font-extrabold">מבט חודשי מהיר</h2>
           <div className="mt-3 grid grid-cols-7 gap-1.5">
             {days.map((day) => {
-              const hasIssue =
-                day.date <= today &&
-                (!day.record ||
-                  (day.record.day_type === "work" && !day.record.clock_out));
+              const hasIssue = dayNeedsAttention(day, today);
               return (
                 <Link
                   key={day.date}
                   href={`/app?month=${selectedMonth}&day=${day.date}`}
                   title={day.date}
+                  aria-current={day.date === today ? "date" : undefined}
                   className={[
                     "flex h-9 items-center justify-center rounded-md border text-xs font-bold no-underline",
                     day.date === selectedDate
                       ? "border-primary bg-primary text-primary-foreground"
                       : hasIssue
                         ? "border-destructive/20 bg-destructive/10 text-destructive"
-                        : day.record
+                        : day.records.length
                           ? "border-success/20 bg-success/10 text-success"
                           : "border-border bg-background text-muted-foreground",
                   ].join(" ")}

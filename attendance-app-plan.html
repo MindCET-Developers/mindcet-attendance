@@ -142,13 +142,13 @@
 <div class="tabs-bar">
   <div class="wrap">
     <div class="tabs" id="tabs">
-      <button class="tab active" data-tab="overview"><span class="num">01</span> סקירה</button>
-      <button class="tab" data-tab="arch"><span class="num">02</span> ארכיטקטורה</button>
-      <button class="tab" data-tab="data"><span class="num">03</span> מודל נתונים</button>
-      <button class="tab" data-tab="flows"><span class="num">04</span> זרימות</button>
-      <button class="tab" data-tab="notif"><span class="num">05</span> התראות</button>
-      <button class="tab" data-tab="design"><span class="num">06</span> עיצוב</button>
-      <button class="tab" data-tab="roadmap"><span class="num">07</span> מפת דרכים</button>
+      <button class="tab active" data-tab="roadmap"><span class="num">01</span> מפת דרכים</button>
+      <button class="tab" data-tab="overview"><span class="num">02</span> סקירה</button>
+      <button class="tab" data-tab="arch"><span class="num">03</span> ארכיטקטורה</button>
+      <button class="tab" data-tab="data"><span class="num">04</span> מודל נתונים</button>
+      <button class="tab" data-tab="flows"><span class="num">05</span> זרימות</button>
+      <button class="tab" data-tab="notif"><span class="num">06</span> התראות</button>
+      <button class="tab" data-tab="design"><span class="num">07</span> עיצוב</button>
       <button class="tab" data-tab="stack"><span class="num">08</span> טכנולוגיה</button>
     </div>
   </div>
@@ -157,8 +157,38 @@
 <main>
 <div class="wrap">
 
-<!-- 01 OVERVIEW -->
-<section class="panel active" id="overview">
+<!-- 01 ROADMAP -->
+<section class="panel active" id="roadmap">
+  <p class="section-title">מפת דרכים</p>
+  <h2 class="head">9 שלבי יישום</h2>
+  <p class="lead">בנייה אינקרמנטלית. נכון ל-28.06.2026: P0–P2 הושלמו, ענף <code>codex/p3-calendar</code> מוזג ל-<code>main</code>, עיצוב היומן עודכן לפי אופציה 1, ותשתית ה-mobile קיימת ונבנית.</p>
+
+  <div class="grid g3">
+    <div class="card kpi"><div class="label">הושלם</div><div class="val brand">P0–P3</div></div>
+    <div class="card kpi"><div class="label">בתהליך</div><div class="val brand">P6 (mobile)</div></div>
+    <div class="card kpi"><div class="label">בדיקות אחרונות</div><div class="val brand">Web typecheck + dev server</div></div>
+  </div>
+
+  <div class="spacer"></div>
+  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח, תיקוני build ל-Expo עם pnpm, ו-P3 ב-web במלואו: כרטיס החתמה, יומן חודשי, שבוע נבחר, ריבוי משמרות ביום (הוספה/מחיקה), עריכת שעות/סוג יום/הערה לכל משמרת, הודעות הצלחה/שגיאה (aria-live), ניווט מקלדת/aria-current, מבט חודשי מהיר ורשימת ימים לטיפול. בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת בלבד, קלטי זמן וחודש עוברים ולידציה, והרשאות נשענות על user_id + RLS.</div></div>
+
+  <div class="card">
+    <div class="timeline">
+      <div class="phase"><div><span class="pnum">P0</span><div class="pest">✅ הושלם</div></div><div><h4>Scaffold</h4><p>מונו-רפו (pnpm+turbo), אתר Next.js, אפליקציית Expo, <code>packages/shared</code>, הגדרות build ו-dev. נבנה בהצלחה.</p></div></div>
+      <div class="phase"><div><span class="pnum">P1</span><div class="pest">✅ הושלם</div></div><div><h4>אימות + Onboarding</h4><p>Google OAuth, middleware, שלד אפליקציה מוגן, מסכי login/onboarding ב-web וב-mobile.</p></div></div>
+      <div class="phase"><div><span class="pnum">P2</span><div class="pest">✅ הושלם</div></div><div><h4>Schema + RLS</h4><p>5 טבלאות, enums, Views, פוליסות RLS, טריגר יצירת פרופיל והרשאות למשתמש מחובר.</p></div></div>
+      <div class="phase"><div><span class="pnum">P3</span><div class="pest">✅ הושלם</div></div><div><h4>החתמה ויומן (web)</h4><p>clock-in/out, יומן חודשי, ניווט חודש/שבוע, ריבוי משמרות ביום (הוספה/מחיקה דרך טופס נפרד לכל משמרת), סוג יום והערה ליום נבחר, הודעות הצלחה/שגיאה לכל פעולה, ליטוש נגישות (aria-live, aria-current, aria-pressed), מבט חודשי מהיר ורשימת ימים לטיפול.</p></div></div>
+      <div class="phase"><div><span class="pnum">P4</span><div class="pest">⬜</div></div><div><h4>דו"ח חודשי + Excel/CSV</h4><p>תצוגה מקדימה + ייצוא דרך <code>/api/export</code>.</p></div></div>
+      <div class="phase"><div><span class="pnum">P5</span><div class="pest">⬜</div></div><div><h4>ייצוא Google Sheets</h4><p>scopes, googleapis, יצירת/עדכון sheet, <code>export_targets</code>.</p></div></div>
+      <div class="phase"><div><span class="pnum">P6</span><div class="pest">🟡 חלקית</div></div><div><h4>אפליקציית Expo (mobile)</h4><p>בוצע: שלד Expo Router, session provider, login Google, onboarding ו-build ל-iOS/Android. נשאר: החתמה + יומן מעל <code>packages/shared</code>.</p></div></div>
+      <div class="phase"><div><span class="pnum">P7</span><div class="pest">⬜</div></div><div><h4>התראות ותזכורות</h4><p>מקומיות (Expo) + push_tokens + Edge Function/cron לימים חסרים.</p></div></div>
+      <div class="phase"><div><span class="pnum">P8</span><div class="pest">🟡 התחיל</div></div><div><h4>ליטוש</h4><p>בוצע חלקית: תיקוני build, תאימות pnpm/Metro, והתעלמות מקבצי סביבת עבודה מקומיים. נשאר: מצבי ריקות/שגיאה, נגישות, אייקונים/splash, PWA לאתר (רשות), build ל-EAS.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 OVERVIEW -->
+<section class="panel" id="overview">
   <p class="section-title">סקירה כללית</p>
   <h2 class="head">מה אנחנו בונים</h2>
   <p class="lead">כלי דיווח נוכחות <b>אישי</b>: החתמת כניסה/יציאה בזמן אמת, תיקון רטרואקטיבי חופשי, יומן חודשי עם סוג יום, תזכורות חכמות, ובסוף החודש — ייצוא דו״ח מסודר ל-Excel/CSV/Google Sheets. ללא ניהול עובדים, מנהלים או HR (נדחה לעתיד, אם בכלל).</p>
@@ -199,7 +229,7 @@
   <div class="note"><span>📌</span><div><b>מה לא נכלל ב-MVP:</b> ניהול עובדים, מחלקות, תפקידים (RBAC), דשבורד מנהל בזמן אמת ואישורי חופשות — כל אלה נדחו לשלב מאוחר יותר, אם בכלל.</div></div>
 </section>
 
-<!-- 02 ARCH -->
+<!-- 03 ARCH -->
 <section class="panel" id="arch">
   <p class="section-title">ארכיטקטורה</p>
   <h2 class="head">מונו-רפו · שני לקוחות, backend אחד</h2>
@@ -265,7 +295,7 @@
   </div>
 </section>
 
-<!-- 03 DATA -->
+<!-- 04 DATA -->
 <section class="panel" id="data">
   <p class="section-title">מודל נתונים</p>
   <h2 class="head">סכמה רזה (5 טבלאות)</h2>
@@ -348,7 +378,7 @@
   </div>
 </section>
 
-<!-- 04 FLOWS -->
+<!-- 05 FLOWS -->
 <section class="panel" id="flows">
   <p class="section-title">זרימות משתמש</p>
   <h2 class="head">3 התרחישים המרכזיים</h2>
@@ -411,7 +441,7 @@
   </div>
 </section>
 
-<!-- 05 NOTIFICATIONS -->
+<!-- 06 NOTIFICATIONS -->
 <section class="panel" id="notif">
   <p class="section-title">התראות ותזכורות</p>
   <h2 class="head">מנוע ההתראות</h2>
@@ -451,7 +481,7 @@
   </div>
 </section>
 
-<!-- 06 DESIGN -->
+<!-- 07 DESIGN -->
 <section class="panel" id="design">
   <p class="section-title">עיצוב</p>
   <h2 class="head">העיצוב הנבחר — Modern Clean</h2>
@@ -471,36 +501,6 @@
       <h4 style="margin:0 0 10px">היסטוריית עיצוב</h4>
       <p class="muted" style="margin:0 0 10px">בשלבי התכנון המוקדמים נבחנו 4 כיווני עיצוב למוצר הארגוני הרחב (Modern / Corporate / Friendly / Dark). הם נשמרו כהיסטוריה תחת <code>designs/archive/</code> ואינם משקפים את ה-MVP הנוכחי.</p>
       <a class="open" href="designs/index.html" target="_blank">גלריית העיצוב ←</a>
-    </div>
-  </div>
-</section>
-
-<!-- 07 ROADMAP -->
-<section class="panel" id="roadmap">
-  <p class="section-title">מפת דרכים</p>
-  <h2 class="head">9 שלבי יישום</h2>
-  <p class="lead">בנייה אינקרמנטלית. נכון ל-26.06.2026: P0–P2 הושלמו, P3 פעיל בענף <code>codex/p3-calendar</code>, עיצוב היומן עודכן לפי אופציה 1, ותשתית ה-mobile קיימת ונבנית.</p>
-
-  <div class="grid g3">
-    <div class="card kpi"><div class="label">הושלם</div><div class="val brand">P0–P2</div></div>
-    <div class="card kpi"><div class="label">בתהליך</div><div class="val brand">P3 + P6</div></div>
-    <div class="card kpi"><div class="label">בדיקות אחרונות</div><div class="val brand">Web + Mobile build</div></div>
-  </div>
-
-  <div class="spacer"></div>
-  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח, תיקוני build ל-Expo עם pnpm, ו-P3 ב-web: כרטיס החתמה, יומן חודשי, שבוע נבחר, עריכת יום יחיד, מבט חודשי מהיר ורשימת ימים לטיפול. בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת בלבד, קלטי זמן וחודש עוברים ולידציה, והרשאות נשענות על user_id + RLS.</div></div>
-
-  <div class="card">
-    <div class="timeline">
-      <div class="phase"><div><span class="pnum">P0</span><div class="pest">✅ הושלם</div></div><div><h4>Scaffold</h4><p>מונו-רפו (pnpm+turbo), אתר Next.js, אפליקציית Expo, <code>packages/shared</code>, הגדרות build ו-dev. נבנה בהצלחה.</p></div></div>
-      <div class="phase"><div><span class="pnum">P1</span><div class="pest">✅ הושלם</div></div><div><h4>אימות + Onboarding</h4><p>Google OAuth, middleware, שלד אפליקציה מוגן, מסכי login/onboarding ב-web וב-mobile.</p></div></div>
-      <div class="phase"><div><span class="pnum">P2</span><div class="pest">✅ הושלם</div></div><div><h4>Schema + RLS</h4><p>5 טבלאות, enums, Views, פוליסות RLS, טריגר יצירת פרופיל והרשאות למשתמש מחובר.</p></div></div>
-      <div class="phase"><div><span class="pnum">P3</span><div class="pest">🟡 בתהליך</div></div><div><h4>החתמה ויומן (web)</h4><p>בוצע: clock-in/out להיום, יומן חודשי, ניווט חודש/שבוע, עריכת שעות, סוג יום והערה ליום נבחר, מבט חודשי מהיר ורשימת ימים לטיפול. העיצוב עודכן לפי אופציה 1 מקובץ הקונספטים. נשאר: תמיכה בריבוי רשומות ביום, הודעות הצלחה/שגיאה וליטוש נגישות.</p></div></div>
-      <div class="phase"><div><span class="pnum">P4</span><div class="pest">⬜</div></div><div><h4>דו"ח חודשי + Excel/CSV</h4><p>תצוגה מקדימה + ייצוא דרך <code>/api/export</code>.</p></div></div>
-      <div class="phase"><div><span class="pnum">P5</span><div class="pest">⬜</div></div><div><h4>ייצוא Google Sheets</h4><p>scopes, googleapis, יצירת/עדכון sheet, <code>export_targets</code>.</p></div></div>
-      <div class="phase"><div><span class="pnum">P6</span><div class="pest">🟡 חלקית</div></div><div><h4>אפליקציית Expo (mobile)</h4><p>בוצע: שלד Expo Router, session provider, login Google, onboarding ו-build ל-iOS/Android. נשאר: החתמה + יומן מעל <code>packages/shared</code>.</p></div></div>
-      <div class="phase"><div><span class="pnum">P7</span><div class="pest">⬜</div></div><div><h4>התראות ותזכורות</h4><p>מקומיות (Expo) + push_tokens + Edge Function/cron לימים חסרים.</p></div></div>
-      <div class="phase"><div><span class="pnum">P8</span><div class="pest">🟡 התחיל</div></div><div><h4>ליטוש</h4><p>בוצע חלקית: תיקוני build, תאימות pnpm/Metro, והתעלמות מקבצי סביבת עבודה מקומיים. נשאר: מצבי ריקות/שגיאה, נגישות, אייקונים/splash, PWA לאתר (רשות), build ל-EAS.</p></div></div>
     </div>
   </div>
 </section>
