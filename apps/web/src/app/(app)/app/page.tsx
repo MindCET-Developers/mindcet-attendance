@@ -16,7 +16,7 @@ import {
   type AttendanceRecord,
   type DayType,
 } from "@att/shared";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/get-current-user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -180,15 +180,6 @@ function buildUrl(params: {
   if (params.status) usp.set("status", params.status);
   if (params.message) usp.set("message", params.message);
   return `/app?${usp.toString()}`;
-}
-
-async function getCurrentUser() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthenticated");
-  return { supabase, user };
 }
 
 function redirectTarget(formData: FormData, fallbackDate: string) {

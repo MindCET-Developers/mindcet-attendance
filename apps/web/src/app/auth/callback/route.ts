@@ -10,8 +10,20 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Google only returns a refresh token when prompt=consent forces it
+      // (see the login page) — persist it so server actions can write to
+      // the user's own Sheets later, outside of this OAuth round-trip.
+      const refreshToken = data.session?.provider_refresh_token;
+      if (refreshToken && data.user) {
+        await supabase
+          .from("export_targets")
+          .upsert(
+            { user_id: data.user.id, google_refresh_token: refreshToken },
+            { onConflict: "user_id" },
+          );
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

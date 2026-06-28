@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "@/components/sign-out-button";
+import { Button } from "@/components/ui/button";
 
 export default async function AppLayout({
   children,
@@ -31,12 +32,22 @@ export default async function AppLayout({
     <div className="min-h-screen">
       <header className="sticky top-0 z-10 border-b bg-card/80 backdrop-blur">
         <div className="container flex h-14 items-center justify-between">
-          <Link href="/app" className="flex items-center gap-2 font-extrabold">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              ⏱
-            </span>
-            נוכחות
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/app" className="flex items-center gap-2 font-extrabold">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                ⏱
+              </span>
+              נוכחות
+            </Link>
+            <nav className="hidden items-center gap-1 sm:flex">
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/app">החתמה</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/app/report">דו״ח חודשי</Link>
+              </Button>
+            </nav>
+          </div>
           <div className="flex items-center gap-3">
             <SignOutButton />
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-sm font-bold text-accent-foreground">

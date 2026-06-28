@@ -161,16 +161,16 @@
 <section class="panel active" id="roadmap">
   <p class="section-title">מפת דרכים</p>
   <h2 class="head">9 שלבי יישום</h2>
-  <p class="lead">בנייה אינקרמנטלית. נכון ל-28.06.2026: P0–P2 הושלמו, ענף <code>codex/p3-calendar</code> מוזג ל-<code>main</code>, עיצוב היומן עודכן לפי אופציה 1, ותשתית ה-mobile קיימת ונבנית.</p>
+  <p class="lead">בנייה אינקרמנטלית. נכון ל-28.06.2026: P0–P5 הושלמו ואומתו מקצה לקצה (כולל ייצוא אמיתי ל-Google Sheets), ותשתית ה-mobile קיימת ונבנית.</p>
 
   <div class="grid g3">
-    <div class="card kpi"><div class="label">הושלם</div><div class="val brand">P0–P3</div></div>
+    <div class="card kpi"><div class="label">הושלם ואומת</div><div class="val brand">P0–P5</div></div>
     <div class="card kpi"><div class="label">בתהליך</div><div class="val brand">P6 (mobile)</div></div>
-    <div class="card kpi"><div class="label">בדיקות אחרונות</div><div class="val brand">Web typecheck + dev server</div></div>
+    <div class="card kpi"><div class="label">נשאר</div><div class="val brand">P7–P8</div></div>
   </div>
 
   <div class="spacer"></div>
-  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח, תיקוני build ל-Expo עם pnpm, ו-P3 ב-web במלואו: כרטיס החתמה, יומן חודשי, שבוע נבחר, ריבוי משמרות ביום (הוספה/מחיקה), עריכת שעות/סוג יום/הערה לכל משמרת, הודעות הצלחה/שגיאה (aria-live), ניווט מקלדת/aria-current, מבט חודשי מהיר ורשימת ימים לטיפול. בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת בלבד, קלטי זמן וחודש עוברים ולידציה, והרשאות נשענות על user_id + RLS.</div></div>
+  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח, תיקוני build ל-Expo עם pnpm, P3 ב-web במלואו (החתמה, יומן, ריבוי משמרות, הודעות סטטוס, נגישות), P4 (עמוד <code>/app/report</code> + <code>/api/export</code> ל-Excel/CSV), ו-P5: ייצוא ל-Google Sheets דרך REST ישיר (ללא תלות ב-<code>googleapis</code>) — שמירת <code>provider_refresh_token</code> ב-callback, מינוף access token לפי דרישה, יצירה/איתור spreadsheet וטאב לפי חודש. <b>אומת מקצה לקצה</b>: נוצר גיליון אמיתי עם הנתונים הנכונים (כולל שורת סיכום). בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת בלבד, קלטי זמן וחודש עוברים ולידציה, ה-API מחזיר 401 מסודר ללא session, והרשאות נשענות על user_id + RLS.</div></div>
 
   <div class="card">
     <div class="timeline">
@@ -178,8 +178,8 @@
       <div class="phase"><div><span class="pnum">P1</span><div class="pest">✅ הושלם</div></div><div><h4>אימות + Onboarding</h4><p>Google OAuth, middleware, שלד אפליקציה מוגן, מסכי login/onboarding ב-web וב-mobile.</p></div></div>
       <div class="phase"><div><span class="pnum">P2</span><div class="pest">✅ הושלם</div></div><div><h4>Schema + RLS</h4><p>5 טבלאות, enums, Views, פוליסות RLS, טריגר יצירת פרופיל והרשאות למשתמש מחובר.</p></div></div>
       <div class="phase"><div><span class="pnum">P3</span><div class="pest">✅ הושלם</div></div><div><h4>החתמה ויומן (web)</h4><p>clock-in/out, יומן חודשי, ניווט חודש/שבוע, ריבוי משמרות ביום (הוספה/מחיקה דרך טופס נפרד לכל משמרת), סוג יום והערה ליום נבחר, הודעות הצלחה/שגיאה לכל פעולה, ליטוש נגישות (aria-live, aria-current, aria-pressed), מבט חודשי מהיר ורשימת ימים לטיפול.</p></div></div>
-      <div class="phase"><div><span class="pnum">P4</span><div class="pest">⬜</div></div><div><h4>דו"ח חודשי + Excel/CSV</h4><p>תצוגה מקדימה + ייצוא דרך <code>/api/export</code>.</p></div></div>
-      <div class="phase"><div><span class="pnum">P5</span><div class="pest">⬜</div></div><div><h4>ייצוא Google Sheets</h4><p>scopes, googleapis, יצירת/עדכון sheet, <code>export_targets</code>.</p></div></div>
+      <div class="phase"><div><span class="pnum">P4</span><div class="pest">✅ הושלם</div></div><div><h4>דו"ח חודשי + Excel/CSV</h4><p>עמוד <code>/app/report</code> עם ניווט חודש, סיכומי ימי עבודה/חופש/מחלה/חג ותצוגה מקדימה; הורדה דרך <code>/api/export</code> (exceljs ל-Excel, CSV עם BOM), עם 401 מסודר כשאין session.</p></div></div>
+      <div class="phase"><div><span class="pnum">P5</span><div class="pest">✅ הושלם</div></div><div><h4>ייצוא Google Sheets</h4><p>כפתור "ייצוא ל-Google Sheets" בעמוד הדו"ח, שמירת refresh token ב-<code>export_targets</code>, ויצירה/עדכון spreadsheet עם טאב לכל חודש דרך REST ישיר ל-Sheets API. אומת מקצה לקצה: גיליון אמיתי נוצר עם הנתונים והסיכום הנכונים.</p></div></div>
       <div class="phase"><div><span class="pnum">P6</span><div class="pest">🟡 חלקית</div></div><div><h4>אפליקציית Expo (mobile)</h4><p>בוצע: שלד Expo Router, session provider, login Google, onboarding ו-build ל-iOS/Android. נשאר: החתמה + יומן מעל <code>packages/shared</code>.</p></div></div>
       <div class="phase"><div><span class="pnum">P7</span><div class="pest">⬜</div></div><div><h4>התראות ותזכורות</h4><p>מקומיות (Expo) + push_tokens + Edge Function/cron לימים חסרים.</p></div></div>
       <div class="phase"><div><span class="pnum">P8</span><div class="pest">🟡 התחיל</div></div><div><h4>ליטוש</h4><p>בוצע חלקית: תיקוני build, תאימות pnpm/Metro, והתעלמות מקבצי סביבת עבודה מקומיים. נשאר: מצבי ריקות/שגיאה, נגישות, אייקונים/splash, PWA לאתר (רשות), build ל-EAS.</p></div></div>
