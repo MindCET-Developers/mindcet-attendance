@@ -20,13 +20,15 @@ async function completeOnboarding(formData: FormData) {
   if (!user) redirect("/login");
 
   const displayName = String(formData.get("display_name") ?? "").trim();
-  const expectedHours = Number(formData.get("expected_hours") ?? 8);
+  const expectedHours = Number(formData.get("expected_hours"));
+  const validExpectedHours =
+    Number.isFinite(expectedHours) && expectedHours > 0 ? expectedHours : 8;
 
   await supabase
     .from("profiles")
     .update({
       report_display_name: displayName || null,
-      expected_daily_hours: Number.isFinite(expectedHours) ? expectedHours : 8,
+      expected_daily_hours: validExpectedHours,
       onboarded: true,
     })
     .eq("id", user.id);

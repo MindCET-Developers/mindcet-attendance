@@ -49,6 +49,8 @@ export async function GET(request: Request) {
     .eq("user_id", user.id)
     .gte("work_date", monthStart)
     .lte("work_date", monthEnd)
+    .order("work_date", { ascending: true })
+    .order("created_at", { ascending: true })
     .returns<AttendanceRecord[]>();
 
   const report = buildMonthlyReport(records ?? [], {

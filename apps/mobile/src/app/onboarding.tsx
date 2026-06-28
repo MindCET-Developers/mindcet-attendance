@@ -19,11 +19,13 @@ export default function OnboardingPage() {
     if (!session?.user) return;
     setSaving(true);
     const hours = Number(expectedHours);
+    const validHours =
+      Number.isFinite(hours) && hours > 0 ? hours : DEFAULT_EXPECTED_DAILY_HOURS;
     await supabase
       .from("profiles")
       .update({
         report_display_name: displayName.trim() || null,
-        expected_daily_hours: Number.isFinite(hours) ? hours : DEFAULT_EXPECTED_DAILY_HOURS,
+        expected_daily_hours: validHours,
         onboarded: true,
       })
       .eq("id", session.user.id);

@@ -117,13 +117,23 @@ function latestIso(
   return values.reduce((max, value) => (value > max ? value : max));
 }
 
-/** A day needs attention if it has no record yet, or an open (unfinished) work shift. */
+/**
+ * A day needs attention if: it has no record yet, every record is marked
+ * "work" but no hours were logged at all, or there's an open (unfinished)
+ * work shift.
+ */
 function dayNeedsAttention(
-  day: Pick<DayView, "date" | "records">,
+  day: Pick<DayView, "date" | "records" | "totalMinutes">,
   today: string,
 ): boolean {
   if (day.date > today) return false;
   if (day.records.length === 0) return true;
+  if (
+    day.totalMinutes === 0 &&
+    day.records.every((record) => record.day_type === "work")
+  ) {
+    return true;
+  }
   return day.records.some(
     (record) => record.day_type === "work" && record.clock_in && !record.clock_out,
   );
@@ -182,6 +192,18 @@ function buildUrl(params: {
   return `/app?${usp.toString()}`;
 }
 
+async function getProfileTimezone(
+  supabase: Awaited<ReturnType<typeof getCurrentUser>>["supabase"],
+  userId: string,
+): Promise<string> {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("timezone")
+    .eq("id", userId)
+    .single<Pick<ProfileRow, "timezone">>();
+  return normalizeTimezone(profile?.timezone);
+}
+
 function redirectTarget(formData: FormData, fallbackDate: string) {
   const month = String(
     formData.get("redirect_month") || monthKey(fallbackDate),
@@ -194,7 +216,8 @@ async function clockIn(formData: FormData) {
   "use server";
 
   const { supabase, user } = await getCurrentUser();
-  const today = toDateKey(new Date());
+  const timezone = await getProfileTimezone(supabase, user.id);
+  const today = toDateKey(new Date(), timezone);
   const now = new Date().toISOString();
   const { month, day } = redirectTarget(formData, today);
 
@@ -242,7 +265,8 @@ async function clockOut(formData: FormData) {
   "use server";
 
   const { supabase, user } = await getCurrentUser();
-  const today = toDateKey(new Date());
+  const timezone = await getProfileTimezone(supabase, user.id);
+  const today = toDateKey(new Date(), timezone);
   const now = new Date().toISOString();
   const { month, day } = redirectTarget(formData, today);
 
@@ -491,10 +515,6 @@ function SegmentForm({
 export default async function AppHomePage({ searchParams }: PageProps) {
   const params = await searchParams;
   const { supabase, user } = await getCurrentUser();
-  const today = toDateKey(new Date());
-  const selectedMonth = isValidMonth(params?.month)
-    ? params.month
-    : monthKey(today);
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -503,6 +523,10 @@ export default async function AppHomePage({ searchParams }: PageProps) {
     .single<ProfileRow>();
 
   const timezone = normalizeTimezone(profile?.timezone);
+  const today = toDateKey(new Date(), timezone);
+  const selectedMonth = isValidMonth(params?.month)
+    ? params.month
+    : monthKey(today);
   const displayName = profile?.report_display_name ?? user.email ?? "";
 
   const monthDays = daysInMonth(selectedMonth);
@@ -547,14 +571,7 @@ export default async function AppHomePage({ searchParams }: PageProps) {
   );
   const monthTotal = days.reduce((sum, day) => sum + day.totalMinutes, 0);
   const completedDays = days.filter((day) => day.totalMinutes > 0).length;
-  const missingWorkDays = days.filter((day) => {
-    if (day.date > today) return false;
-    if (day.records.length === 0) return true;
-    return (
-      day.records.every((record) => record.day_type === "work") &&
-      day.totalMinutes === 0
-    );
-  }).length;
+  const missingWorkDays = days.filter((day) => dayNeedsAttention(day, today)).length;
   const todayMinutes = todayRecords.reduce(
     (sum, record) => sum + minutesBetween(record.clock_in, record.clock_out),
     0,
@@ -852,7 +869,11 @@ export default async function AppHomePage({ searchParams }: PageProps) {
                 >
                   <span className="font-bold">{day.date}</span>
                   <span className="text-muted-foreground">
-                    {day.records.length ? "משמרת פתוחה" : "חסר דיווח"}
+                    {day.records.length === 0
+                      ? "חסר דיווח"
+                      : day.records.some((r) => r.day_type === "work" && r.clock_in && !r.clock_out)
+                        ? "משמרת פתוחה"
+                        : "אין שעות רשומות"}
                   </span>
                 </Link>
               ))
