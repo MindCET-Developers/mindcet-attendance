@@ -115,6 +115,17 @@ export default function SettingsScreen() {
             </View>
           </View>
 
+          <View style={styles.switchRow}>
+            <Switch
+              value={settings.forgot_clockout_enabled}
+              onValueChange={(value) => handleToggle({ forgot_clockout_enabled: value })}
+            />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.switchLabel}>תזכורת שכחתי לצאת</Text>
+              <Text style={styles.switchSub}>תזכורת מקומית אם נשארה משמרת פתוחה</Text>
+            </View>
+          </View>
+
           <View style={styles.row}>
             <View style={styles.field}>
               <Text style={styles.fieldLabel}>שעת כניסה</Text>
@@ -140,6 +151,19 @@ export default function SettingsScreen() {
                 textAlign="center"
               />
             </View>
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>שכחתי לצאת (שעות)</Text>
+              <TextInput
+                style={styles.input}
+                value={forgotHours}
+                onChangeText={setForgotHours}
+                placeholder="10"
+                placeholderTextColor="#b7bdcc"
+                keyboardType="numeric"
+                maxLength={3}
+                textAlign="center"
+              />
+            </View>
           </View>
 
           <Pressable
@@ -156,21 +180,10 @@ export default function SettingsScreen() {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>התראות שרת (בקרוב)</Text>
+          <Text style={styles.cardTitle}>התראות שרת</Text>
           <Text style={styles.cardSub}>
-            ההגדרות האלה נשמרות כבר עכשיו, אך השליחה בפועל תופעל בשלב הבא.
+            נשלחות דרך Expo Push — דורשות build עצמאי (לא Expo Go).
           </Text>
-
-          <View style={styles.switchRow}>
-            <Switch
-              value={settings.forgot_clockout_enabled}
-              onValueChange={(value) => handleToggle({ forgot_clockout_enabled: value })}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.switchLabel}>תזכורת שכחתי לצאת</Text>
-              <Text style={styles.switchSub}>אם נשארה משמרת פתוחה זמן רב</Text>
-            </View>
-          </View>
 
           <View style={styles.switchRow}>
             <Switch
@@ -190,7 +203,7 @@ export default function SettingsScreen() {
             />
             <View style={{ flex: 1 }}>
               <Text style={styles.switchLabel}>תזכורת סוף חודש</Text>
-              <Text style={styles.switchSub}>לבדוק את הדו״ח לפני סוף החודש</Text>
+              <Text style={styles.switchSub}>תזכורת ב-28 לחודש לבדוק את הדו״ח</Text>
             </View>
           </View>
         </View>

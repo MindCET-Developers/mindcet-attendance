@@ -19,6 +19,7 @@ Notifications.setNotificationHandler({
 const CHANNEL_ID = "attendance-reminders";
 const CLOCK_IN_NOTIFICATION_ID = "daily-clock-in-reminder";
 const CLOCK_OUT_NOTIFICATION_ID = "daily-clock-out-reminder";
+const FORGOT_CLOCKOUT_NOTIFICATION_ID = "forgot-clockout-reminder";
 
 async function ensureNotificationChannel() {
   if (Platform.OS !== "android") return;
@@ -97,6 +98,39 @@ export async function syncDailyReminders(settings: {
       },
     });
   }
+}
+
+/**
+ * Schedules a one-time "forgot to clock out?" reminder `afterHours` hours from
+ * now. Called right after a successful clock-in when the setting is enabled.
+ * Cancel-then-reschedule keeps this idempotent regardless of prior state.
+ */
+export async function scheduleForgotClockoutReminder(afterHours: number): Promise<void> {
+  await Notifications.cancelScheduledNotificationAsync(FORGOT_CLOCKOUT_NOTIFICATION_ID).catch(() => {});
+  const granted = await requestNotificationPermissions();
+  if (!granted) return;
+  await ensureNotificationChannel();
+  await Notifications.scheduleNotificationAsync({
+    identifier: FORGOT_CLOCKOUT_NOTIFICATION_ID,
+    content: {
+      title: "שכחתם לצאת?",
+      body: "יש משמרת פתוחה — אל תשכחו להחתים יציאה",
+      ...(Platform.OS === "android" ? { channelId: CHANNEL_ID } : {}),
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+      seconds: Math.max(afterHours, 0.5) * 3600,
+      repeats: false,
+    },
+  });
+}
+
+/**
+ * Cancels the "forgot to clock out" reminder. Called after a successful
+ * clock-out so the notification never fires when the user clocked out normally.
+ */
+export async function cancelForgotClockoutReminder(): Promise<void> {
+  await Notifications.cancelScheduledNotificationAsync(FORGOT_CLOCKOUT_NOTIFICATION_ID).catch(() => {});
 }
 
 /**

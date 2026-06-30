@@ -22,6 +22,8 @@ import {
 import { useProfile } from "@/lib/use-profile";
 import { useSession } from "@/lib/session-provider";
 import { buildDayViews, clockIn, clockInAt, clockOut, useAttendance } from "@/lib/use-attendance";
+import { cancelForgotClockoutReminder, scheduleForgotClockoutReminder } from "@/lib/notifications";
+import { supabase } from "@/lib/supabase/client";
 import { TodayCard } from "@/components/attendance/today-card";
 import { RetroClockIn } from "@/components/attendance/retro-clock-in";
 import type { MascotPhase } from "@/components/attendance/mascot";
@@ -38,6 +40,23 @@ export default function AppHomeScreen() {
 
   const [banner, setBanner] = useState<Banner | null>(null);
   const [clockBusy, setClockBusy] = useState(false);
+
+  const [forgotEnabled, setForgotEnabled] = useState(false);
+  const [forgotHours, setForgotHours] = useState(10);
+  useEffect(() => {
+    if (!userId) return;
+    supabase
+      .from("notification_settings")
+      .select("forgot_clockout_enabled, forgot_clockout_after_hours")
+      .eq("user_id", userId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setForgotEnabled(data.forgot_clockout_enabled);
+          setForgotHours(data.forgot_clockout_after_hours);
+        }
+      });
+  }, [userId]);
 
   const { records, refresh } = useAttendance(userId, currentMonth);
   const days = useMemo(() => buildDayViews(records, currentMonth), [records, currentMonth]);
@@ -98,6 +117,7 @@ export default function AppHomeScreen() {
     if (!error) {
       setMascotPhase("checkingIn");
       refresh();
+      if (forgotEnabled) scheduleForgotClockoutReminder(forgotHours);
     }
   }
 
@@ -113,6 +133,7 @@ export default function AppHomeScreen() {
     if (!error) {
       setMascotPhase("checkingIn");
       refresh();
+      if (forgotEnabled) scheduleForgotClockoutReminder(forgotHours);
     }
   }
 
@@ -128,6 +149,7 @@ export default function AppHomeScreen() {
     if (!error) {
       setMascotPhase("checkingOut");
       refresh();
+      cancelForgotClockoutReminder();
     }
   }
 
