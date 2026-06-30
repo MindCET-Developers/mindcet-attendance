@@ -1,3 +1,4 @@
 {
-  "installCommand": "npx pnpm@10.12.1 install --frozen-lockfile"
+  "installCommand": "npx pnpm@10.12.1 install --frozen-lockfile",
+  "buildCommand": "turbo run build --filter=@att/web"
 }
