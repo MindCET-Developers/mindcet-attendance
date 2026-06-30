@@ -1,6 +1,5 @@
 import type { MonthlyReport } from "./types";
-import { DAY_TYPE_LABELS, REPORT_COLUMNS } from "./constants";
-import { formatMinutes } from "./time";
+import { REPORT_COLUMNS } from "./constants";
 
 /**
  * Convert a monthly report into a 2D string matrix:
@@ -10,12 +9,15 @@ import { formatMinutes } from "./time";
 export function reportToMatrix(report: MonthlyReport): string[][] {
   const header = [...REPORT_COLUMNS];
   const dataRows = report.rows.map((row) => [
-    row.workDate,
     row.weekdayLabel,
-    DAY_TYPE_LABELS[row.dayType],
+    row.workDate,
     row.firstClockIn ?? "—",
     row.lastClockOut ?? "—",
-    row.totalMinutes > 0 ? formatMinutes(row.totalMinutes) : "—",
+    "",
+    "",
+    row.dayType === "vacation" ? "X" : "",
+    row.dayType === "sick" ? "X" : "",
+    "",
     row.note ?? "",
   ]);
 
@@ -25,7 +27,10 @@ export function reportToMatrix(report: MonthlyReport): string[][] {
     "",
     "",
     "",
-    formatMinutes(report.summary.totalMinutes),
+    "",
+    "",
+    "",
+    "",
     "",
   ];
 

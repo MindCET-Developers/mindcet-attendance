@@ -37,13 +37,17 @@ export const HEBREW_MONTHS = [
 ] as const;
 
 /** Column headers for the exported monthly report (Excel / CSV / Sheets). */
+/** Matches the field order required by HR's month-end submission template. */
 export const REPORT_COLUMNS = [
-  "תאריך",
   "יום",
-  "סוג יום",
-  "כניסה",
-  "יציאה",
-  "סה״כ שעות",
+  "תאריך",
+  "שעת התחלה",
+  "שעת סיום",
+  "השתלמות",
+  "תפקיד",
+  "חופשה",
+  "מחלה",
+  "נסיעות",
   "הערות",
 ] as const;
 

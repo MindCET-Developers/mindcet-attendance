@@ -3,11 +3,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   buildMonthlyReport,
-  DAY_TYPE_LABELS,
   daysInMonth,
   formatMinutes,
   formatMonthHebrew,
   monthKey,
+  monthOffset,
   reportToMatrix,
   toDateKey,
   type AttendanceRecord,
@@ -42,12 +42,6 @@ function isValidMonth(value: string | undefined): value is string {
   if (!value || !/^\d{4}-\d{2}$/.test(value)) return false;
   const month = Number(value.slice(5, 7));
   return month >= 1 && month <= 12;
-}
-
-function monthOffset(month: string, delta: number): string {
-  const [year, monthNumber] = month.split("-").map(Number);
-  const date = new Date(Date.UTC(year, monthNumber - 1 + delta, 1));
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 function buildUrl(month: string, status?: "success" | "error", message?: string) {
@@ -307,12 +301,15 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-right text-muted-foreground">
-                <th className="py-2 pr-2 font-semibold">תאריך</th>
                 <th className="py-2 pr-2 font-semibold">יום</th>
-                <th className="py-2 pr-2 font-semibold">סוג יום</th>
-                <th className="py-2 pr-2 font-semibold">כניסה</th>
-                <th className="py-2 pr-2 font-semibold">יציאה</th>
-                <th className="py-2 pr-2 font-semibold">סה״כ</th>
+                <th className="py-2 pr-2 font-semibold">תאריך</th>
+                <th className="py-2 pr-2 font-semibold">שעת התחלה</th>
+                <th className="py-2 pr-2 font-semibold">שעת סיום</th>
+                <th className="py-2 pr-2 font-semibold">השתלמות</th>
+                <th className="py-2 pr-2 font-semibold">תפקיד</th>
+                <th className="py-2 pr-2 font-semibold">חופשה</th>
+                <th className="py-2 pr-2 font-semibold">מחלה</th>
+                <th className="py-2 pr-2 font-semibold">נסיעות</th>
                 <th className="py-2 pr-2 font-semibold">הערות</th>
               </tr>
             </thead>
@@ -320,20 +317,21 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
               {report.rows.length ? (
                 report.rows.map((row) => (
                   <tr key={row.workDate} className="border-b last:border-0">
-                    <td className="py-2 pr-2 font-medium">{row.workDate}</td>
                     <td className="py-2 pr-2 text-muted-foreground">
                       {row.weekdayLabel}
                     </td>
-                    <td className="py-2 pr-2">{DAY_TYPE_LABELS[row.dayType]}</td>
+                    <td className="py-2 pr-2 font-medium">{row.workDate}</td>
                     <td className="py-2 pr-2 tabular-nums">
                       {row.firstClockIn ?? "—"}
                     </td>
                     <td className="py-2 pr-2 tabular-nums">
                       {row.lastClockOut ?? "—"}
                     </td>
-                    <td className="py-2 pr-2 font-bold tabular-nums">
-                      {row.totalMinutes > 0 ? formatMinutes(row.totalMinutes) : "—"}
-                    </td>
+                    <td className="py-2 pr-2"></td>
+                    <td className="py-2 pr-2"></td>
+                    <td className="py-2 pr-2">{row.dayType === "vacation" ? "X" : ""}</td>
+                    <td className="py-2 pr-2">{row.dayType === "sick" ? "X" : ""}</td>
+                    <td className="py-2 pr-2"></td>
                     <td className="py-2 pr-2 text-muted-foreground">
                       {row.note ?? ""}
                     </td>
@@ -341,7 +339,7 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="py-6 text-center text-muted-foreground">
+                  <td colSpan={10} className="py-6 text-center text-muted-foreground">
                     אין דיווחים בחודש זה
                   </td>
                 </tr>
