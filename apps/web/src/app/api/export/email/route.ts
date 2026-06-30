@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(token);
   if (!user) return new Response("לא מחובר", { status: 401 });
 
   let body: unknown;
