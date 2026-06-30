@@ -1,9 +1,10 @@
+import type { FC } from "react";
 import Link from "next/link";
 import { Clock, FileSpreadsheet, BellRing, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
-const features = [
+const features: { icon: FC<{ className?: string }>; title: string; body: string }[] = [
   {
     icon: Clock,
     title: "החתמה בלחיצה",
