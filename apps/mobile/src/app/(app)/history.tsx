@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Constants from "expo-constants";
 import {
   formatMonthHebrew,
   monthKey,
@@ -42,7 +43,7 @@ export default function HistoryScreen() {
 
   const handleSendEmail = useCallback(async () => {
     const accessToken = session?.access_token;
-    const baseUrl = process.env.EXPO_PUBLIC_WEB_BASE_URL;
+    const baseUrl = Constants.expoConfig?.extra?.webBaseUrl;
     if (!accessToken || !baseUrl) {
       setBanner({ type: "error", message: "שירות המייל לא מוגדר — פנה למנהל המערכת" });
       return;
