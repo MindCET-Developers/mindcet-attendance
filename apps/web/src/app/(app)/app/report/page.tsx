@@ -23,6 +23,7 @@ import {
   writeSheetValues,
 } from "@/lib/google-sheets";
 import { Button } from "@/components/ui/button";
+import { EditableReportTable } from "@/components/report-table";
 
 type PageProps = {
   searchParams?: Promise<{ month?: string; status?: string; message?: string }>;
@@ -297,56 +298,11 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-right text-muted-foreground">
-                <th className="py-2 pr-2 font-semibold">יום</th>
-                <th className="py-2 pr-2 font-semibold">תאריך</th>
-                <th className="py-2 pr-2 font-semibold">שעת התחלה</th>
-                <th className="py-2 pr-2 font-semibold">שעת סיום</th>
-                <th className="py-2 pr-2 font-semibold">השתלמות</th>
-                <th className="py-2 pr-2 font-semibold">תפקיד</th>
-                <th className="py-2 pr-2 font-semibold">חופשה</th>
-                <th className="py-2 pr-2 font-semibold">מחלה</th>
-                <th className="py-2 pr-2 font-semibold">נסיעות</th>
-                <th className="py-2 pr-2 font-semibold">הערות</th>
-              </tr>
-            </thead>
-            <tbody>
-              {report.rows.length ? (
-                report.rows.map((row) => (
-                  <tr key={row.workDate} className="border-b last:border-0">
-                    <td className="py-2 pr-2 text-muted-foreground">
-                      {row.weekdayLabel}
-                    </td>
-                    <td className="py-2 pr-2 font-medium">{row.workDate}</td>
-                    <td className="py-2 pr-2 tabular-nums">
-                      {row.firstClockIn ?? "—"}
-                    </td>
-                    <td className="py-2 pr-2 tabular-nums">
-                      {row.lastClockOut ?? "—"}
-                    </td>
-                    <td className="py-2 pr-2"></td>
-                    <td className="py-2 pr-2"></td>
-                    <td className="py-2 pr-2">{row.dayType === "vacation" ? "X" : ""}</td>
-                    <td className="py-2 pr-2">{row.dayType === "sick" ? "X" : ""}</td>
-                    <td className="py-2 pr-2"></td>
-                    <td className="py-2 pr-2 text-muted-foreground">
-                      {row.note ?? ""}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={10} className="py-6 text-center text-muted-foreground">
-                    אין דיווחים בחודש זה
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <EditableReportTable
+          rows={report.rows}
+          records={records ?? []}
+          timezone={profile?.timezone ?? undefined}
+        />
       </section>
     </div>
   );
