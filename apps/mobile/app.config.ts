@@ -9,12 +9,23 @@ const config: ExpoConfig = {
   orientation: "portrait",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
+  icon: "./assets/icon.png",
+  splash: {
+    image: "./assets/splash.png",
+    resizeMode: "contain",
+    backgroundColor: "#ffffff",
+  },
   ios: {
     supportsTablet: false,
     bundleIdentifier: "com.mindcet.attendance",
+    icon: "./assets/icon.png",
   },
   android: {
     package: "com.mindcet.attendance",
+    adaptiveIcon: {
+      foregroundImage: "./assets/icon.png",
+      backgroundColor: "#ffffff",
+    },
   },
   plugins: ["expo-router", "expo-notifications"],
   extra: {

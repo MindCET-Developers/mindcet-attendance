@@ -6,6 +6,14 @@ export const metadata: Metadata = {
   description:
     "מעקב נוכחות אישי — החתמת כניסה/יציאה, יומן חודשי, תזכורות וייצוא לאקסל / Google Sheets.",
   manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "נוכחות",
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export const viewport: Viewport = {

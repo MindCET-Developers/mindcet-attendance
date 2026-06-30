@@ -119,6 +119,12 @@ export default function HistoryScreen() {
 
         {loading && days.every((day) => day.records.length === 0) ? (
           <ActivityIndicator style={{ marginVertical: 12 }} />
+        ) : days.every((day) => day.records.length === 0) ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyIcon}>📅</Text>
+            <Text style={styles.emptyTitle}>אין רשומות לחודש זה</Text>
+            <Text style={styles.emptyBody}>החתמות שתבצע יופיעו כאן</Text>
+          </View>
         ) : (
           <MonthGrid days={days} selectedDate={selectedDate} today={today} onSelect={setSelectedDate} />
         )}
@@ -160,4 +166,8 @@ const styles = StyleSheet.create({
   },
   emailBtnDisabled: { opacity: 0.5 },
   emailBtnText: { color: "#4f46e5", fontWeight: "700", fontSize: 14 },
+  emptyState: { alignItems: "center", paddingVertical: 32, gap: 6 },
+  emptyIcon: { fontSize: 36 },
+  emptyTitle: { fontSize: 16, fontWeight: "700", color: "#11151f" },
+  emptyBody: { fontSize: 13, color: "#8a92a6" },
 });
