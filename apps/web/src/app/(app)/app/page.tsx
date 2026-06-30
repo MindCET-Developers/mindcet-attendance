@@ -4,13 +4,21 @@ import Link from "next/link";
 import {
   DAY_TYPE_LABELS,
   DAY_TYPE_ORDER,
-  DEFAULT_TIMEZONE,
+  dateOffset,
+  dayNeedsAttention,
   daysInMonth,
+  earliestIso,
   formatClockTime,
   formatMinutes,
   formatMonthHebrew,
+  isoToTimeValue,
+  isValidTimeValue,
+  latestIso,
+  localTimeToIso,
   monthKey,
+  monthOffset,
   minutesBetween,
+  normalizeTimezone,
   toDateKey,
   weekdayLabel,
   type AttendanceRecord,
@@ -20,6 +28,8 @@ import { getCurrentUser } from "@/lib/get-current-user";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ShiftClock } from "@/components/attendance/shift-clock";
+import { RetroClockIn } from "@/components/attendance/retro-clock-in";
 
 type PageProps = {
   searchParams?: Promise<{
@@ -68,18 +78,6 @@ function isValidDateKey(value: string | undefined): value is string {
   return Boolean(value && /^\d{4}-\d{2}-\d{2}$/.test(value));
 }
 
-function monthOffset(month: string, delta: number): string {
-  const [year, monthNumber] = month.split("-").map(Number);
-  const date = new Date(Date.UTC(year, monthNumber - 1 + delta, 1));
-  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
-}
-
-function dateOffset(dateKey: string, delta: number): string {
-  const date = new Date(`${dateKey}T12:00:00Z`);
-  date.setUTCDate(date.getUTCDate() + delta);
-  return date.toISOString().slice(0, 10);
-}
-
 function weekDates(selectedDate: string): string[] {
   const date = new Date(`${selectedDate}T12:00:00Z`);
   const start = new Date(date);
@@ -89,93 +87,6 @@ function weekDates(selectedDate: string): string[] {
     day.setUTCDate(start.getUTCDate() + index);
     return day.toISOString().slice(0, 10);
   });
-}
-
-function isoToTimeValue(iso: string | null, timezone: string): string {
-  return formatClockTime(iso, timezone).replace(/^24:/, "00:");
-}
-
-function earliestIso(
-  records: AttendanceRow[],
-  field: "clock_in" | "clock_out",
-): string | null {
-  const values = records
-    .map((record) => record[field])
-    .filter((value): value is string => Boolean(value));
-  if (!values.length) return null;
-  return values.reduce((min, value) => (value < min ? value : min));
-}
-
-function latestIso(
-  records: AttendanceRow[],
-  field: "clock_in" | "clock_out",
-): string | null {
-  const values = records
-    .map((record) => record[field])
-    .filter((value): value is string => Boolean(value));
-  if (!values.length) return null;
-  return values.reduce((max, value) => (value > max ? value : max));
-}
-
-/**
- * A day needs attention if: it has no record yet, every record is marked
- * "work" but no hours were logged at all, or there's an open (unfinished)
- * work shift.
- */
-function dayNeedsAttention(
-  day: Pick<DayView, "date" | "records" | "totalMinutes">,
-  today: string,
-): boolean {
-  if (day.date > today) return false;
-  if (day.records.length === 0) return true;
-  if (
-    day.totalMinutes === 0 &&
-    day.records.every((record) => record.day_type === "work")
-  ) {
-    return true;
-  }
-  return day.records.some(
-    (record) => record.day_type === "work" && record.clock_in && !record.clock_out,
-  );
-}
-
-function timezoneOffset(date: Date, timezone: string): string {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: timezone,
-    timeZoneName: "longOffset",
-  }).formatToParts(date);
-  const value = parts.find((part) => part.type === "timeZoneName")?.value;
-  const match = value?.match(/GMT([+-]\d{2}):?(\d{2})?/);
-  if (!match) return "Z";
-  return `${match[1]}:${match[2] ?? "00"}`;
-}
-
-function normalizeTimezone(value: string | null | undefined): string {
-  if (!value) return DEFAULT_TIMEZONE;
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: value }).format(new Date());
-    return value;
-  } catch {
-    return DEFAULT_TIMEZONE;
-  }
-}
-
-function isValidTimeValue(value: string): boolean {
-  if (!/^\d{2}:\d{2}$/.test(value)) return false;
-  const [hours, minutes] = value.split(":").map(Number);
-  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
-}
-
-function localTimeToIso(
-  dateKey: string,
-  timeValue: string,
-  timezone: string,
-): string | null {
-  if (!timeValue) return null;
-  if (!isValidTimeValue(timeValue)) return null;
-  const probe = new Date(`${dateKey}T${timeValue}:00Z`);
-  const offset = timezoneOffset(probe, timezone);
-  return new Date(`${dateKey}T${timeValue}:00${offset}`).toISOString();
 }
 
 function buildUrl(params: {
@@ -251,6 +162,64 @@ async function clockIn(formData: FormData) {
         clock_in: now,
         day_type: "work",
         source: "realtime",
+      });
+
+  revalidatePath("/app");
+  redirect(
+    error
+      ? buildUrl({ month, day, status: "error", message: "החתמת הכניסה נכשלה, נסו שוב" })
+      : buildUrl({ month, day, status: "success", message: "כניסה נרשמה בהצלחה" }),
+  );
+}
+
+async function clockInAt(formData: FormData) {
+  "use server";
+
+  const { supabase, user } = await getCurrentUser();
+  const timezone = await getProfileTimezone(supabase, user.id);
+  const today = toDateKey(new Date(), timezone);
+  const { month, day } = redirectTarget(formData, today);
+
+  const timeValue = String(formData.get("clock_in_time") ?? "");
+  if (!isValidTimeValue(timeValue)) {
+    redirect(buildUrl({ month, day, status: "error", message: "שעה לא תקינה" }));
+  }
+
+  const clockInIso = localTimeToIso(today, timeValue, timezone);
+  if (!clockInIso || new Date(clockInIso).getTime() > Date.now()) {
+    redirect(buildUrl({ month, day, status: "error", message: "לא ניתן לרשום שעה עתידית" }));
+  }
+
+  const { data: todays } = await supabase
+    .from("attendance_records")
+    .select("id, clock_in, clock_out, day_type")
+    .eq("user_id", user.id)
+    .eq("work_date", today)
+    .returns<Pick<AttendanceRow, "id" | "clock_in" | "clock_out" | "day_type">[]>();
+
+  const open = (todays ?? []).find((record) => record.clock_in && !record.clock_out);
+  if (open) {
+    redirect(
+      buildUrl({ month, day, status: "error", message: "כבר רשומה משמרת פתוחה להיום" }),
+    );
+  }
+
+  const placeholder = (todays ?? []).find(
+    (record) => !record.clock_in && !record.clock_out && record.day_type === "work",
+  );
+
+  const { error } = placeholder
+    ? await supabase
+        .from("attendance_records")
+        .update({ clock_in: clockInIso, source: "manual", is_edited: true })
+        .eq("id", placeholder.id)
+    : await supabase.from("attendance_records").insert({
+        user_id: user.id,
+        work_date: today,
+        clock_in: clockInIso,
+        day_type: "work",
+        source: "manual",
+        is_edited: true,
       });
 
   revalidatePath("/app");
@@ -569,6 +538,8 @@ export default async function AppHomePage({ searchParams }: PageProps) {
   const isClockedIn = todayRecords.some(
     (record) => record.clock_in && !record.clock_out,
   );
+  const openClockIn =
+    todayRecords.find((record) => record.clock_in && !record.clock_out)?.clock_in ?? null;
   const monthTotal = days.reduce((sum, day) => sum + day.totalMinutes, 0);
   const completedDays = days.filter((day) => day.totalMinutes > 0).length;
   const missingWorkDays = days.filter((day) => dayNeedsAttention(day, today)).length;
@@ -656,9 +627,7 @@ export default async function AppHomePage({ searchParams }: PageProps) {
               <p className="text-sm font-medium text-muted-foreground">
                 היום · {today}
               </p>
-              <p className="mt-2 text-5xl font-extrabold tabular-nums">
-                {formatMinutes(todayMinutes)}
-              </p>
+              <ShiftClock baseMinutes={todayMinutes} openClockIn={openClockIn} />
             </div>
             <span
               role="status"
@@ -703,6 +672,15 @@ export default async function AppHomePage({ searchParams }: PageProps) {
               </Button>
             </form>
           </div>
+
+          {!isClockedIn ? (
+            <RetroClockIn
+              action={clockInAt}
+              month={selectedMonth}
+              day={selectedDate}
+              defaultOpen={statusType === "error" && Boolean(params?.message)}
+            />
+          ) : null}
 
           <div className="mt-5 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-secondary p-3">

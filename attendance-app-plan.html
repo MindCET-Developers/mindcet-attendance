@@ -161,16 +161,16 @@
 <section class="panel active" id="roadmap">
   <p class="section-title">מפת דרכים</p>
   <h2 class="head">9 שלבי יישום</h2>
-  <p class="lead">בנייה אינקרמנטלית. נכון ל-28.06.2026: P0–P5 הושלמו ואומתו מקצה לקצה (כולל ייצוא אמיתי ל-Google Sheets), ותשתית ה-mobile קיימת ונבנית.</p>
+  <p class="lead">בנייה אינקרמנטלית. נכון ל-29.06.2026: P0–P6 הושלמו (כולל ייצוא אמיתי ל-Google Sheets והחתמה+יומן באפליקציית ה-mobile, מעל <code>packages/shared</code> משותף לשני הלקוחות), P7 התחיל (תזכורת יומית מקומית + רישום push token פעילים; שאר סוגי התזכורות עדיין רק נשמרות בלי הפעלה בפועל), ו-P8 בתחילת דרכו (כרגע <b>בעבודה לא-committed</b>): שדרוג Expo מ-SDK 52 ל-54 (React 19 / RN 0.81), איחוד מלא של לוגיקת התאריך/שעה ב-web אל <code>packages/shared</code> (לא רק חשבון אלא גם <code>monthOffset</code>, <code>dateOffset</code>, <code>normalizeTimezone</code> וכו'), זרימת "שכחתי להחתים" (RetroClockIn) ושעון רץ חדש (ShiftClock) גם ב-web, ותוספת Mascot — אנימציית וידאו (idle/checking-in/working/coffee) על מסך ההחתמה במובייל שמשקפת את מצב הנוכחות.</p>
 
   <div class="grid g3">
-    <div class="card kpi"><div class="label">הושלם ואומת</div><div class="val brand">P0–P5</div></div>
-    <div class="card kpi"><div class="label">בתהליך</div><div class="val brand">P6 (mobile)</div></div>
-    <div class="card kpi"><div class="label">נשאר</div><div class="val brand">P7–P8</div></div>
+    <div class="card kpi"><div class="label">הושלם</div><div class="val brand">P0–P6</div></div>
+    <div class="card kpi"><div class="label">בתהליך</div><div class="val brand">P7 + P8</div></div>
+    <div class="card kpi"><div class="label">נשאר</div><div class="val brand">Cron שרת (P7) + commit ל-P8</div></div>
   </div>
 
   <div class="spacer"></div>
-  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח, תיקוני build ל-Expo עם pnpm, P3 ב-web במלואו (החתמה, יומן, ריבוי משמרות, הודעות סטטוס, נגישות), P4 (עמוד <code>/app/report</code> + <code>/api/export</code> ל-Excel/CSV), ו-P5: ייצוא ל-Google Sheets דרך REST ישיר (ללא תלות ב-<code>googleapis</code>) — שמירת <code>provider_refresh_token</code> ב-callback, מינוף access token לפי דרישה, יצירה/איתור spreadsheet וטאב לפי חודש. <b>אומת מקצה לקצה</b>: נוצר גיליון אמיתי עם הנתונים הנכונים (כולל שורת סיכום). בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת בלבד, קלטי זמן וחודש עוברים ולידציה, ה-API מחזיר 401 מסודר ללא session, והרשאות נשענות על user_id + RLS.</div></div>
+  <div class="note"><span>✅</span><div><b>מה כבר בוצע טכנית:</b> מונו-רפו pnpm/turbo, Web ב-Next.js, Mobile ב-Expo Router, התחברות Google דרך Supabase, onboarding ב-web וב-mobile, סכמה ו-RLS ב-Supabase, חבילת <code>packages/shared</code> לחישובי זמן/דו"ח (כולל ולידציית שעות, היגד timezone↔ISO, ו"דורש טיפול" — משותפים בין web ל-mobile), תיקוני build ל-Expo עם pnpm, P3 ב-web במלואו (החתמה, יומן, ריבוי משמרות, הודעות סטטוס, נגישות), P4 (עמוד <code>/app/report</code> + <code>/api/export</code> ל-Excel/CSV), P5: ייצוא ל-Google Sheets דרך REST ישיר (ללא תלות ב-<code>googleapis</code>) — שמירת <code>provider_refresh_token</code> ב-callback, מינוף access token לפי דרישה, יצירה/איתור spreadsheet וטאב לפי חודש (<b>אומת מקצה לקצה</b>: נוצר גיליון אמיתי עם הנתונים הנכונים, כולל שורת סיכום), ו-P6: מסך החתמה+יומן ב-mobile (כרטיס היום עם כניסה/יציאה ושעון רץ, ניווט חודשי, רשת ימים, עריכת משמרות/סוג יום/הערה לכל יום) הבונה על אותה לוגיקת <code>@att/shared</code> כמו ה-web. בוצעה בדיקת קוד/אבטחה ממוקדת: timezone נקרא בצד שרת/קליינט מורשה בלבד, קלטי זמן וחודש עוברים ולידציה, ה-API מחזיר 401 מסודר ללא session, והרשאות נשענות על user_id + RLS.</div></div>
 
   <div class="card">
     <div class="timeline">
@@ -180,9 +180,9 @@
       <div class="phase"><div><span class="pnum">P3</span><div class="pest">✅ הושלם</div></div><div><h4>החתמה ויומן (web)</h4><p>clock-in/out, יומן חודשי, ניווט חודש/שבוע, ריבוי משמרות ביום (הוספה/מחיקה דרך טופס נפרד לכל משמרת), סוג יום והערה ליום נבחר, הודעות הצלחה/שגיאה לכל פעולה, ליטוש נגישות (aria-live, aria-current, aria-pressed), מבט חודשי מהיר ורשימת ימים לטיפול.</p></div></div>
       <div class="phase"><div><span class="pnum">P4</span><div class="pest">✅ הושלם</div></div><div><h4>דו"ח חודשי + Excel/CSV</h4><p>עמוד <code>/app/report</code> עם ניווט חודש, סיכומי ימי עבודה/חופש/מחלה/חג ותצוגה מקדימה; הורדה דרך <code>/api/export</code> (exceljs ל-Excel, CSV עם BOM), עם 401 מסודר כשאין session.</p></div></div>
       <div class="phase"><div><span class="pnum">P5</span><div class="pest">✅ הושלם</div></div><div><h4>ייצוא Google Sheets</h4><p>כפתור "ייצוא ל-Google Sheets" בעמוד הדו"ח, שמירת refresh token ב-<code>export_targets</code>, ויצירה/עדכון spreadsheet עם טאב לכל חודש דרך REST ישיר ל-Sheets API. אומת מקצה לקצה: גיליון אמיתי נוצר עם הנתונים והסיכום הנכונים.</p></div></div>
-      <div class="phase"><div><span class="pnum">P6</span><div class="pest">🟡 חלקית</div></div><div><h4>אפליקציית Expo (mobile)</h4><p>בוצע: שלד Expo Router, session provider, login Google, onboarding ו-build ל-iOS/Android. נשאר: החתמה + יומן מעל <code>packages/shared</code>.</p></div></div>
-      <div class="phase"><div><span class="pnum">P7</span><div class="pest">⬜</div></div><div><h4>התראות ותזכורות</h4><p>מקומיות (Expo) + push_tokens + Edge Function/cron לימים חסרים.</p></div></div>
-      <div class="phase"><div><span class="pnum">P8</span><div class="pest">🟡 התחיל</div></div><div><h4>ליטוש</h4><p>בוצע חלקית: תיקוני build, תאימות pnpm/Metro, והתעלמות מקבצי סביבת עבודה מקומיים. נשאר: מצבי ריקות/שגיאה, נגישות, אייקונים/splash, PWA לאתר (רשות), build ל-EAS.</p></div></div>
+      <div class="phase"><div><span class="pnum">P6</span><div class="pest">✅ הושלם</div></div><div><h4>אפליקציית Expo (mobile)</h4><p>שלד Expo Router, session provider, login Google, onboarding, build ל-iOS/Android, ומסך החתמה+יומן מעל <code>packages/shared</code>: כרטיס היום (כניסה/יציאה, סטטוס משמרת פתוחה, סיכום יומי/חודשי), ניווט בין חודשים, רשת ימים עם סימון "דורש טיפול", ועריכת כל משמרת (שעות, סוג יום, הערה, מחיקה). מאז עבר ניווט ל-3 טאבים תחתונים — <b>היום</b> (כרטיס החתמה בלבד), <b>היסטוריה</b> (ניווט חודשי + רשת ימים + עריכת יום), <b>הגדרות</b> (פרופיל מלא לעריכה: שם תצוגה/אזור זמן/שעות צפויות/יום תחילת שבוע, התראות, התנתקות) — כדי לא לעמיס את פעולת ההחתמה התכופה עם UI שרלוונטי רק לפעמים.</p></div></div>
+      <div class="phase"><div><span class="pnum">P7</span><div class="pest">🟡 התחיל</div></div><div><h4>התראות ותזכורות</h4><p>בוצע: מסך הגדרות עם טוגלים ל-4 סוגי תזכורות, בקשת הרשאות, תזכורת כניסה/יציאה יומית מתוזמנת מקומית (<code>expo-notifications</code>, ערוץ Android), ו-<code>registerPushToken</code> שמרשם Expo push token ל-<code>push_tokens</code> (best-effort, מדלג ב-Expo Go/סימולטור). נשאר: ל"שכחתי לצאת"/"ימים חסרים"/"סוף חודש" יש טוגל ושמירה בלבד — אין עדיין לוגיקת הפעלה (לא תזמון מקומי ולא Edge Function/cron בצד שרת שישלח בפועל).</p></div></div>
+      <div class="phase"><div><span class="pnum">P8</span><div class="pest">🟡 התחיל (לא-committed)</div></div><div><h4>ליטוש</h4><p>בוצע (committed): תיקוני build, תאימות pnpm/Metro, והתעלמות מקבצי סביבת עבודה מקומיים. בעבודה כרגע, <b>עדיין לא ב-commit</b>: שדרוג Expo SDK 52→54 (React 19.1, RN 0.81, expo-router 6) ב-<code>apps/mobile</code>; איחוד מלא של פונקציות תאריך/שעה שהיו כפולות ב-web (<code>monthOffset</code>, <code>dateOffset</code>, <code>isoToTimeValue</code>, <code>earliestIso</code>/<code>latestIso</code>, <code>dayNeedsAttention</code>, <code>timezoneOffset</code>, <code>normalizeTimezone</code>, <code>isValidTimeValue</code>, <code>localTimeToIso</code>) לתוך <code>packages/shared/src/time.ts</code> + פונקציות חדשות (<code>elapsedSeconds</code>, <code>formatDuration</code>, <code>parseFlexibleTime</code>); קומפוננטות חדשות <code>ShiftClock</code> (שעון רץ חי בשנייה) ו-<code>RetroClockIn</code> ("שכחתי להחתים") גם ב-web (<code>apps/web/src/components/attendance</code>), במקביל לגרסה המקבילה במובייל; ומסך ההחתמה במובייל קיבל קומפוננטת <code>Mascot</code> — אנימציית וידאו (idle/checking-in/working/coffee, expo-video) שמשתנה לפי מצב המשמרת. נשאר: לבדוק build/typecheck אחרי שדרוג ה-SDK ולעשות commit, מצבי ריקות/שגיאה, נגישות, אייקונים/splash, PWA לאתר (רשות), build ל-EAS.</p></div></div>
     </div>
   </div>
 </section>
@@ -533,7 +533,7 @@
       <h4 style="margin:0 0 10px">🗂️ מבנה הריפו</h4>
       <ul class="clean">
         <li><code>apps/web</code> — אתר Next.js</li>
-        <li><code>apps/mobile</code> — Expo (P6)</li>
+        <li><code>apps/mobile</code> — Expo (P6 ✅)</li>
         <li><code>packages/shared</code> — טיפוסים + לוגיקה</li>
         <li><code>supabase/</code> — מיגרציות + RLS</li>
       </ul>

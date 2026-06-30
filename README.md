@@ -10,7 +10,7 @@
 
 ```
 apps/web/          Next.js 15 (App Router, RTL) + Tailwind + shadcn-style
-apps/mobile/       Expo / React Native  (בהמשך — P6)
+apps/mobile/       Expo / React Native (החתמה + יומן חודשי)
 packages/shared/   טיפוסים + חישוב שעות + בניית דו״ח + שורות ייצוא
 supabase/          מיגרציות SQL + RLS + Views  (ראו supabase/README.md)
 ```
@@ -42,10 +42,10 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 - [x] **P0** — Scaffold monorepo + web (נבנה בהצלחה)
 - [x] **P1** — אימות Google + onboarding (web)
 - [x] **P2** — סכמת Supabase + RLS + Views
-- [ ] **P3** — החתמה ויומן חודשי (web)
-- [ ] **P4** — דו״ח חודשי + ייצוא Excel/CSV
-- [ ] **P5** — ייצוא Google Sheets
-- [ ] **P6** — אפליקציית Expo (mobile)
+- [x] **P3** — החתמה ויומן חודשי (web)
+- [x] **P4** — דו״ח חודשי + ייצוא Excel/CSV
+- [x] **P5** — ייצוא Google Sheets
+- [x] **P6** — אפליקציית Expo (mobile)
 - [ ] **P7** — התראות ותזכורות
 - [ ] **P8** — ליטוש + builds
 
