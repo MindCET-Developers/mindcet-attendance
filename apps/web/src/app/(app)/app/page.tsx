@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ShiftClock } from "@/components/attendance/shift-clock";
 import { RetroClockIn } from "@/components/attendance/retro-clock-in";
+import { TodayMascot } from "@/components/attendance/today-mascot";
 
 type PageProps = {
   searchParams?: Promise<{
@@ -576,6 +577,12 @@ export default async function AppHomePage({ searchParams }: PageProps) {
   const statusType =
     params?.status === "error" ? "error" : params?.status === "success" ? "success" : null;
 
+  // Seed the mascot's one-shot clip from the action that just succeeded.
+  const justClockedIn =
+    statusType === "success" && params?.message?.startsWith("כניסה");
+  const justClockedOut =
+    statusType === "success" && params?.message?.startsWith("יציאה");
+
   return (
     <div className="space-y-5">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
@@ -622,6 +629,13 @@ export default async function AppHomePage({ searchParams }: PageProps) {
 
       <section className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
         <aside className="rounded-xl border bg-card p-5 shadow-sm">
+          <div className="mb-4 flex justify-center lg:hidden">
+            <TodayMascot
+              isClockedIn={isClockedIn}
+              justClockedIn={justClockedIn}
+              justClockedOut={justClockedOut}
+            />
+          </div>
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-medium text-muted-foreground">
