@@ -42,9 +42,9 @@ export default function HistoryScreen() {
 
   const handleSendEmail = useCallback(async () => {
     const accessToken = session?.access_token;
-    const baseUrl = process.env.EXPO_PUBLIC_WEB_BASE_URL;
-    if (!accessToken || !baseUrl) {
-      setBanner({ type: "error", message: "שירות המייל לא מוגדר — פנה למנהל המערכת" });
+    const baseUrl = process.env.EXPO_PUBLIC_WEB_BASE_URL || "https://attendance.mindcet.app";
+    if (!accessToken) {
+      setBanner({ type: "error", message: "לא מחובר — התחבר קודם" });
       return;
     }
     setSendingEmail(true);
