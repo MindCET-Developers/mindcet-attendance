@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { dayNeedsAttention } from "@att/shared";
+import { HEBREW_WEEKDAYS, dayNeedsAttention, weekdayIndex } from "@att/shared";
 import type { DayView } from "@/lib/use-attendance";
 
 const SCREEN_PADDING = 20;
@@ -19,9 +19,20 @@ export function MonthGrid({
 }) {
   const { width } = useWindowDimensions();
   const cellSize = (width - SCREEN_PADDING * 2 - CELL_GAP * (COLUMNS - 1)) / COLUMNS;
+  // RTL layout renders the first cell rightmost, so Sunday (index 0) ends up
+  // in the rightmost column; pad so day 1 lands under its actual weekday.
+  const leadingBlanks = days.length ? weekdayIndex(days[0].date) : 0;
 
   return (
     <View style={styles.grid}>
+      {HEBREW_WEEKDAYS.map((label) => (
+        <View key={label} style={{ width: cellSize }}>
+          <Text style={styles.weekdayLabel}>{label}</Text>
+        </View>
+      ))}
+      {Array.from({ length: leadingBlanks }, (_, index) => (
+        <View key={`pad-${index}`} style={{ width: cellSize, height: cellSize }} />
+      ))}
       {days.map((day) => {
         const isSelected = day.date === selectedDate;
         const isToday = day.date === today;
@@ -56,6 +67,12 @@ export function MonthGrid({
 
 const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", gap: CELL_GAP },
+  weekdayLabel: {
+    textAlign: "center",
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#7a8194",
+  },
   cell: {
     borderRadius: 10,
     alignItems: "center",
