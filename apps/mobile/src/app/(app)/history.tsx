@@ -42,7 +42,7 @@ export default function HistoryScreen() {
 
   const handleSendEmail = useCallback(async () => {
     const accessToken = session?.access_token;
-    const baseUrl = process.env.EXPO_PUBLIC_WEB_BASE_URL || "https://attendance.mindcet.app";
+    const baseUrl = process.env.EXPO_PUBLIC_WEB_BASE_URL || "https://mindcet-attendance-web.vercel.app";
     if (!accessToken) {
       setBanner({ type: "error", message: "לא מחובר — התחבר קודם" });
       return;
@@ -64,8 +64,9 @@ export default function HistoryScreen() {
       } else {
         setBanner({ type: "success", message: `הדו״ח נשלח למייל שלך` });
       }
-    } catch {
-      setBanner({ type: "error", message: "שגיאת רשת — בדוק חיבור לאינטרנט" });
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      setBanner({ type: "error", message: `נכשל מול ${baseUrl} — ${detail}` });
     } finally {
       setSendingEmail(false);
     }

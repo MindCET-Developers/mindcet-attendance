@@ -27,6 +27,14 @@ const config: ExpoConfig = {
       backgroundColor: "#ffffff",
     },
   },
+  updates: {
+    url: "https://u.expo.dev/2ce91b67-5ec8-4a4f-b45d-afb1570ccefb",
+  },
+  // OTA updates apply only to builds whose app version matches; bump `version`
+  // whenever native modules change so stale binaries don't receive new JS.
+  runtimeVersion: {
+    policy: "appVersion",
+  },
   plugins: ["expo-router", "expo-notifications"],
   extra: {
     supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,

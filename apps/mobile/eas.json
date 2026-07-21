@@ -7,17 +7,28 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_WEB_BASE_URL": "https://mindcet-attendance-web.vercel.app"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_WEB_BASE_URL": "https://mindcet-attendance-web.vercel.app"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_WEB_BASE_URL": "https://mindcet-attendance-web.vercel.app"
+      },
       "android": {
         "buildType": "app-bundle"
       }
