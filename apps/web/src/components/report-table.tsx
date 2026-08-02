@@ -141,7 +141,10 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Failed to save");
+        const message = error.error || "Failed to save";
+        throw new Error(
+          error.details ? `${message}: ${error.details}` : message
+        );
       }
 
       // Success - exit edit mode

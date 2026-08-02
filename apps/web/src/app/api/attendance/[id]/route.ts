@@ -49,7 +49,14 @@ export async function PATCH(
     if (error) {
       console.error("Supabase update error:", error);
       return NextResponse.json(
-        { error: "Failed to update record" },
+        {
+          error: "Failed to update record",
+          // Surface the Postgres message locally — a generic 500 hides the
+          // actual cause (bad column type, RLS, constraint) during debugging.
+          ...(process.env.NODE_ENV !== "production"
+            ? { details: error.message, code: error.code, hint: error.hint }
+            : {}),
+        },
         { status: 500 }
       );
     }
@@ -58,7 +65,12 @@ export async function PATCH(
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        ...(process.env.NODE_ENV !== "production" && error instanceof Error
+          ? { details: error.message }
+          : {}),
+      },
       { status: 500 }
     );
   }
