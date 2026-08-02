@@ -24,7 +24,9 @@ supabase db reset
 ## הגדרת התחברות Google
 1. **Authentication → Providers → Google** → הפעילו, הזינו Client ID / Secret
    (מ-Google Cloud Console → OAuth consent + Credentials).
-2. **Redirect URLs**: הוסיפו `http://localhost:3000/auth/callback` (ולכתובת הפרודקשן).
+2. **Redirect URLs**: הוסיפו `http://localhost:3000/auth/callback`, כתובת הפרודקשן של ה-web,
+   וגם `mindcet-attendance://auth/callback` עבור אפליקציית המובייל (APK/EAS build) —
+   בלי זה ה-redirect בחזרה לאפליקציה נכשל בשקט אחרי ההתחברות ב-Google.
 3. לייצוא Google Sheets — בקשת ה-scopes נעשית בצד הלקוח בעת ההתחברות:
    `https://www.googleapis.com/auth/drive.file` + `https://www.googleapis.com/auth/spreadsheets`.
    ב-Google Cloud Console יש לאשר את ה-scopes הללו ב-OAuth consent screen.

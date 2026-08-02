@@ -30,7 +30,7 @@ export default function LoginPage() {
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
           scopes: GOOGLE_SCOPES,
-          queryParams: { access_type: "offline", prompt: "consent" },
+          queryParams: { access_type: "offline", prompt: "select_account consent" },
         },
       });
       if (error) throw error;

@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   DAY_TYPE_LABELS,
   DAY_TYPE_ORDER,
+  HEBREW_WEEKDAYS,
   dateOffset,
   dayNeedsAttention,
   daysInMonth,
@@ -20,6 +21,7 @@ import {
   minutesBetween,
   normalizeTimezone,
   toDateKey,
+  weekdayIndex,
   weekdayLabel,
   type AttendanceRecord,
   type DayType,
@@ -877,6 +879,16 @@ export default async function AppHomePage({ searchParams }: PageProps) {
         <div className="rounded-xl border bg-card p-4 shadow-sm">
           <h2 className="text-lg font-extrabold">מבט חודשי מהיר</h2>
           <div className="mt-3 grid grid-cols-7 gap-1.5">
+            {HEBREW_WEEKDAYS.map((label) => (
+              <div key={label} className="text-center text-xs font-bold text-muted-foreground">
+                {label}
+              </div>
+            ))}
+            {days.length
+              ? Array.from({ length: weekdayIndex(days[0].date) }, (_, index) => (
+                  <div key={`pad-${index}`} />
+                ))
+              : null}
             {days.map((day) => {
               const hasIssue = dayNeedsAttention(day, today);
               return (

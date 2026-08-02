@@ -83,10 +83,14 @@ export function monthKey(value: string | Date, timezone?: string): string {
   return key.slice(0, 7);
 }
 
+/** JS weekday index (0 = Sunday) for a "YYYY-MM-DD" key. */
+export function weekdayIndex(dateKey: string): number {
+  return new Date(`${dateKey}T12:00:00Z`).getUTCDay();
+}
+
 /** Hebrew short weekday label for a "YYYY-MM-DD" key. */
 export function weekdayLabel(dateKey: string): string {
-  const d = new Date(`${dateKey}T12:00:00Z`);
-  return HEBREW_WEEKDAYS[d.getUTCDay()] ?? "";
+  return HEBREW_WEEKDAYS[weekdayIndex(dateKey)] ?? "";
 }
 
 /** "יוני 2026" from a "YYYY-MM" month key. */
