@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import type { MonthlyReportRow, AttendanceRecord } from "@att/shared";
+import { useRouter } from "next/navigation";
+import {
+  localTimeToIso,
+  normalizeTimezone,
+  type MonthlyReportRow,
+  type AttendanceRecord,
+} from "@att/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -34,6 +40,7 @@ const DAY_TYPE_LABELS: Record<DayType, string> = {
 };
 
 export function EditableReportTable({ rows, records, timezone }: EditableReportTableProps) {
+  const router = useRouter();
   const [editState, setEditState] = useState<RowEditState>({});
 
   const getRowEditState = (workDate: string, row: MonthlyReportRow) => {
@@ -100,13 +107,33 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
       [workDate]: { ...prev[workDate], isSaving: true, error: null },
     }));
 
+    const tz = normalizeTimezone(timezone);
+    const clockInIso = state.clockIn
+      ? localTimeToIso(workDate, state.clockIn, tz)
+      : null;
+    const clockOutIso = state.clockOut
+      ? localTimeToIso(workDate, state.clockOut, tz)
+      : null;
+
+    if ((state.clockIn && !clockInIso) || (state.clockOut && !clockOutIso)) {
+      setEditState((prev) => ({
+        ...prev,
+        [workDate]: {
+          ...prev[workDate],
+          isSaving: false,
+          error: "שעה לא תקינה",
+        },
+      }));
+      return;
+    }
+
     try {
       const response = await fetch(`/api/attendance/${recordId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          clock_in: state.clockIn,
-          clock_out: state.clockOut,
+          clock_in: clockInIso,
+          clock_out: clockOutIso,
           day_type: state.dayType,
           note: state.note,
         }),
@@ -125,7 +152,7 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
       });
 
       // Revalidate the page data
-      window.location.reload();
+      router.refresh();
     } catch (error) {
       setEditState((prev) => ({
         ...prev,
