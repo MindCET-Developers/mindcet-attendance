@@ -77,6 +77,7 @@ export async function GET(request: Request) {
   });
   matrix.forEach((row) => sheet.addRow(row));
   sheet.getRow(1).font = { bold: true };
+  sheet.getRow(matrix.length).font = { bold: true };
   sheet.columns.forEach((column) => {
     column.width = 16;
   });

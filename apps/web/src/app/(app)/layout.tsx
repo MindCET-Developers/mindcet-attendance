@@ -46,6 +46,9 @@ export default async function AppLayout({
               <Button asChild variant="ghost" size="sm">
                 <Link href="/app/report">דו״ח חודשי</Link>
               </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/app/fill">השלמת ימים</Link>
+              </Button>
             </nav>
           </div>
           <div className="flex items-center gap-3">

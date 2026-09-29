@@ -49,6 +49,7 @@ export const REPORT_COLUMNS = [
   "מחלה",
   "נסיעות",
   "הערות",
+  "סה״כ שעות",
 ] as const;
 
 export const DEFAULT_TIMEZONE = "Asia/Jerusalem";
