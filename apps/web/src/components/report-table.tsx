@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  formatMinutes,
   localTimeToIso,
   normalizeTimezone,
   type MonthlyReportRow,
@@ -183,6 +184,7 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
             <th className="py-2 pr-2 font-semibold">מחלה</th>
             <th className="py-2 pr-2 font-semibold">נסיעות</th>
             <th className="py-2 pr-2 font-semibold">הערות</th>
+            <th className="py-2 pr-2 font-semibold">סה״כ שעות</th>
             <th className="py-2 pr-2 font-semibold">פעולות</th>
           </tr>
         </thead>
@@ -216,6 +218,9 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
                       <td className="py-2 pr-2"></td>
                       <td className="py-2 pr-2 text-muted-foreground">
                         {row.note ?? ""}
+                      </td>
+                      <td className="py-2 pr-2 font-semibold tabular-nums">
+                        {row.totalMinutes > 0 ? formatMinutes(row.totalMinutes) : ""}
                       </td>
                       <td className="py-2 pr-2">
                         <Button
@@ -315,6 +320,7 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
                           placeholder="הערה"
                         />
                       </td>
+                      <td className="py-2 pr-2"></td>
                       <td className="py-2 pr-2 space-x-1">
                         <Button
                           size="sm"
@@ -344,7 +350,7 @@ export function EditableReportTable({ rows, records, timezone }: EditableReportT
             })
           ) : (
             <tr>
-              <td colSpan={11} className="py-6 text-center text-muted-foreground">
+              <td colSpan={12} className="py-6 text-center text-muted-foreground">
                 אין דיווחים בחודש זה
               </td>
             </tr>

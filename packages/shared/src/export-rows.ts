@@ -1,9 +1,11 @@
 import type { MonthlyReport } from "./types";
 import { REPORT_COLUMNS } from "./constants";
+import { formatMinutes } from "./time";
 
 /**
  * Convert a monthly report into a 2D string matrix:
- * header row + one row per day + a summary row.
+ * header row + one row per day (with its total hours) + a summary row
+ * carrying the month's total hours.
  * Shared by the Excel, CSV and Google Sheets exporters.
  */
 export function reportToMatrix(report: MonthlyReport): string[][] {
@@ -19,6 +21,7 @@ export function reportToMatrix(report: MonthlyReport): string[][] {
     row.dayType === "sick" ? "X" : "",
     "",
     row.note ?? "",
+    row.totalMinutes > 0 ? formatMinutes(row.totalMinutes) : "",
   ]);
 
   const summaryRow = [
@@ -32,6 +35,7 @@ export function reportToMatrix(report: MonthlyReport): string[][] {
     "",
     "",
     "",
+    formatMinutes(report.summary.totalMinutes),
   ];
 
   return [header, ...dataRows, summaryRow];

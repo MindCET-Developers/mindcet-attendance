@@ -263,6 +263,9 @@ export default async function MonthlyReportPage({ searchParams }: PageProps) {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-extrabold">תצוגה מקדימה</h2>
           <div className="flex flex-wrap items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/app/fill?month=${selectedMonth}`}>השלמת ימים חסרים</Link>
+            </Button>
             <Button asChild size="sm">
               <a href={exportHref("xlsx")}>הורדת Excel</a>
             </Button>
